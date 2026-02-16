@@ -1,3 +1,5 @@
+package grocery.shopping
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,13 +9,11 @@ import android.widget.EditText
 import android.widget.Spinner
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
-import grocery.shopping.R
 import grocery.shopping.data.Dairy
 import grocery.shopping.data.Fruit
 import grocery.shopping.data.GroceryItems
 import grocery.shopping.data.Vegetables
 import grocery.shopping.data.typeDetermine
-import kotlin.collections.MutableList
 
 class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
 
@@ -21,8 +21,8 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
 
     init{
 
-        listOfProducts.add(GroceryItems("", "","",1))
-        listOfProducts.add(GroceryItems("", "","",1))
+        listOfProducts.add(GroceryItems("", "", "", 1))
+        listOfProducts.add(GroceryItems("", "", "", 1))
 
     }
      class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -53,7 +53,8 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
 
         // Setup the Spinner for quantity
         val options = (1..15).toList().map { it.toString() }
-        val spinnerAdapter = ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, options)
+        val spinnerAdapter =
+            ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, options)
         holder.productAmount.adapter = spinnerAdapter
 
         // Set the spinner to the saved quantity (index is quantity - 1)
