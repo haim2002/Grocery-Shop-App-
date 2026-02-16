@@ -9,17 +9,23 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.R
 import grocery.shopping.data.Dairy
-import grocery.shopping.data.DataStructures
 import grocery.shopping.data.Fruit
 import grocery.shopping.data.GroceryItems
 import grocery.shopping.data.Vegetables
 import grocery.shopping.data.typeDetermine
+import kotlin.collections.MutableList
 
 class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
 
-    val itemList =DataStructures.NamedShoppingList("רשימה")
+    val listOfProducts: MutableList<GroceryItems> = mutableListOf()
 
-    inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    init{
+
+        listOfProducts.add(GroceryItems("", "","",1))
+        listOfProducts.add(GroceryItems("", "","",1))
+
+    }
+     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val productName: EditText = itemView.findViewById(R.id.productName)
         val productAmount: Spinner = itemView.findViewById(R.id.productAmount)
@@ -37,15 +43,16 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
         return ItemViewHolder(inflatedView)
     }
 
+
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         // 1. Reference the data object for this specific row
-        val currentItem = itemList[position]
+        val currentItem = listOfProducts[position]
 
         // 2. Load data into the views (Standard Android behavior)
         holder.productName.setText(currentItem.name)
 
-        // Setup the Spinner for quantity (assuming 1-10)
-        val options = (1..10).toList().map { it.toString() }
+        // Setup the Spinner for quantity
+        val options = (1..15).toList().map { it.toString() }
         val spinnerAdapter = ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, options)
         holder.productAmount.adapter = spinnerAdapter
 
@@ -57,7 +64,6 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
             val input = text.toString()
             currentItem.name = input
 
-            // AUTOMATIC CATEGORIZATION
             // Check if the word typed matches your 'typeDetermine' map
             val detectedType = typeDetermine[input]
             if (detectedType != null && detectedType != currentItem.type) {
@@ -71,7 +77,7 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
                 }
 
                 // Update the list at this position with the new specific object
-                itemList[position] = transformedItem
+                listOfProducts[position] = transformedItem
             }
         }
 
@@ -85,7 +91,7 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return listOfProducts.size
     }
 
 }

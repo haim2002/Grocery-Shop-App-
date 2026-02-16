@@ -15,7 +15,7 @@ object GroceryData {
 open class GroceryItems(
     open var id: String? = null,
     open val type: String = "General",
-    open var name: String? = "",
+    open var name: String = "",
     open var quantity: Int=1
 
 )
