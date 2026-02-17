@@ -4,11 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import grocery.shopping.ui.login.GoogleSignInActivity
@@ -33,14 +33,12 @@ class MainActivity : AppCompatActivity() {
 
             finish()
         }
-        val addBtn: FloatingActionButton = findViewById(R.id.add_btn)
+        val addNewList: FloatingActionButton = findViewById(R.id.add_btn)
 
-        addBtn.setOnClickListener {
-            val listIntent = Intent(this@MainActivity, ListMaker::class.java)
+        addNewList.setOnClickListener {
+            val listIntent = Intent(this@MainActivity, ListCreator::class.java)
             startActivity(listIntent)
         }
-
-
     }
 
     //implementing menu in the app

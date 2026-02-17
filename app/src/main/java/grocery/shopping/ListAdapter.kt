@@ -1,12 +1,15 @@
 package grocery.shopping
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.data.Dairy
@@ -19,19 +22,18 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
 
     val listOfProducts: MutableList<GroceryItems> = mutableListOf()
 
+
     init{
 
         listOfProducts.add(GroceryItems("", "", "", 1))
-        listOfProducts.add(GroceryItems("", "", "", 1))
-
     }
      class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val productName: EditText = itemView.findViewById(R.id.productName)
-        val productAmount: Spinner = itemView.findViewById(R.id.productAmount)
+         val productAmount: Spinner = itemView.findViewById(R.id.productAmount)
+
 
     }
-
 
 
     override fun onCreateViewHolder(
@@ -39,15 +41,16 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
         viewType: Int
     ): ItemViewHolder { //inflate the layout of each item
         val inflatedView: View = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_format, parent, false)
+            .inflate(R.layout.list_adapter, parent, false)
         return ItemViewHolder(inflatedView)
     }
 
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+
+
         // 1. Reference the data object for this specific row
         val currentItem = listOfProducts[position]
-
         // 2. Load data into the views (Standard Android behavior)
         holder.productName.setText(currentItem.name)
 
@@ -89,6 +92,12 @@ class ListAdapter() : RecyclerView.Adapter<ListAdapter.ItemViewHolder>() {
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+    fun addNewItem() {
+        listOfProducts.add(GroceryItems("", "", "", 1))
+        //Tell the RecyclerView to draw a new row at the end
+        notifyItemInserted(listOfProducts.size - 1)
     }
 
     override fun getItemCount(): Int {
