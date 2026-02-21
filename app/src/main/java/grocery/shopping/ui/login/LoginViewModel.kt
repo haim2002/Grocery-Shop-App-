@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import grocery.shopping.data.login.LoginRepository
-import grocery.shopping.data.login.Result
+import grocery.shopping.login.LoginRepository
+import grocery.shopping.login.Result
 
 import grocery.shopping.R
 

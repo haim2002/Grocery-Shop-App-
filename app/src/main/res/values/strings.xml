@@ -16,5 +16,6 @@
     <string name="add_new_item">Add new item</string>
     <string name="list_text_description">שם המוצר</string>
     <string name="addItemText">הוסף מוצר</string>
+    <string name="save_button_text">שמור רשימה</string>
 
 </resources>

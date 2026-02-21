@@ -1,6 +1,6 @@
-package grocery.shopping.data.login
+package grocery.shopping.login
 
-import grocery.shopping.data.login.model.LoggedInUser
+import grocery.shopping.login.model.LoggedInUser
 
 /**
  * Class that requests authentication and user information from the remote data source and

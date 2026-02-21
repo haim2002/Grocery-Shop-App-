@@ -2,8 +2,8 @@ package grocery.shopping.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import grocery.shopping.data.login.LoginDataSource
-import grocery.shopping.data.login.LoginRepository
+import grocery.shopping.login.LoginDataSource
+import grocery.shopping.login.LoginRepository
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

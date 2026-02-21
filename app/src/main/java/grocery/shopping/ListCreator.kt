@@ -1,8 +1,9 @@
 package grocery.shopping
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
+import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -25,14 +26,18 @@ class ListCreator : AppCompatActivity() {
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
 
-        val addListItem: Button =findViewById<Button>(R.id.addListItem)
+        val addListItem = findViewById<Button>(R.id.addListItem)
         val saveListButton = findViewById<Button>(R.id.saveList)
 
         addListItem.setOnClickListener {
+            // Add a new item to the list
             myAdapter.addNewItem()
 
         }
+        saveListButton.setOnClickListener {
+            // Save the list to the database
+            myAdapter.saveItems()
 
-
+        }
     }
 }

@@ -1,6 +1,6 @@
-package grocery.shopping.data.login
+package grocery.shopping.login
 
-import grocery.shopping.data.login.model.LoggedInUser
+import grocery.shopping.login.model.LoggedInUser
 import java.io.IOException
 import java.util.UUID
 

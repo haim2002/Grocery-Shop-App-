@@ -1,4 +1,4 @@
-package grocery.shopping.data.login
+package grocery.shopping.login
 
 /**
  * A generic class that holds a value with its loading status.
