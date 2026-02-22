@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             // Sign out the user
             FirebaseAuth.getInstance().signOut()
 
-            // going back to login screen
+            // going back to log in screen
             val intent = Intent(this, GoogleSignInActivity::class.java)
             //prevents back option when signing out
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

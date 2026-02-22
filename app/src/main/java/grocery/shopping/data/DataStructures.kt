@@ -5,7 +5,8 @@ class DataStructures {
     data class NamedShoppingList(
         var listName: String,
         val items: MutableList<GroceryItems> = mutableListOf(),
-        val dateCreated: Long = System.currentTimeMillis()
+        val dateCreated: Long = System.currentTimeMillis(),
+        val userId: String? = null
     )
 
 

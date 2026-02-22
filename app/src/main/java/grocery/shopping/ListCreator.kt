@@ -1,15 +1,14 @@
 package grocery.shopping
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
-
+private lateinit var myAdapter: ListCreatorAdapter
 class ListCreator : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,24 +19,32 @@ class ListCreator : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
-        val myAdapter = ListAdapter()
+        myAdapter = ListCreatorAdapter()
         recyclerView.adapter = myAdapter
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
 
-        val addListItem = findViewById<Button>(R.id.addListItem)
-        val saveListButton = findViewById<Button>(R.id.saveList)
+    }
 
-        addListItem.setOnClickListener {
-            // Add a new item to the list
-            myAdapter.addNewItem()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.list_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
 
-        }
-        saveListButton.setOnClickListener {
-            // Save the list to the database
-            myAdapter.saveItems()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
+        return when (item.itemId) {
+            R.id.addListItem -> {
+                myAdapter.addNewItem()
+                true
+            }
+            R.id.saveItems -> {
+                myAdapter.saveItems()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }
