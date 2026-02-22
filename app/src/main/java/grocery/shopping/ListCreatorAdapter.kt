@@ -12,28 +12,23 @@ import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.data.GroceryItems
 import grocery.shopping.data.sortGroceryInput
 
+
 class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolder>() {
 
     val listOfProducts: MutableList<GroceryItems> = mutableListOf()
     var finalSortedList: MutableList<GroceryItems> = mutableListOf()
-
-
-
 /*
     init{
 
         listOfProducts.add(GroceryItems(DEFAULT_ID, GENERAL_TYPE, DEFAULT_PRODUCT_NAME, DEFAULT_ITEM_QUANTITY))
     }
-
  */
      class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+         //reference to the views in the layout
         val productName: EditText = itemView.findViewById(R.id.productName)
          val productAmount: Spinner = itemView.findViewById(R.id.productAmount)
-
-
     }
-
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -44,56 +39,43 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
         return ItemViewHolder(inflatedView)
     }
 
-
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
 
-
-
-
-
-            // 1. Reference the data object for this specific row
+            // make reference of current item in the list
             val currentItem = listOfProducts[position]
-            // 2. Load data into the views (Standard Android behavior)
+
+            // Set up the EditText with the current name
             holder.productName.setText(currentItem.name)
 
-            // Set up the Spinner for quantity
-            val options = (1..15).toList().map { it.toString() }
+            // Set up the spinner with options
+            val options = (MIN_ITEM_QUANTITY..MAX_ITEM_QUANTITY).toList().map { it.toString() }
             val spinnerAdapter =
                 ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, options)
             holder.productAmount.adapter = spinnerAdapter
 
-            // Set the spinner to the saved quantity (index is quantity - 1)
+            // Set the selected item based on the current quantity
             holder.productAmount.setSelection(currentItem.quantity - 1)
 
-
-            // 3. Save changes as the user types (The "Creation Phase" Logic)
+            // Save name changes from the EditText
             holder.productName.doAfterTextChanged { text ->
                 val input = text.toString()
                 currentItem.name = input
-                    // Update the list at this position with the new specific object
+                    // Update the item in the list
                     listOfProducts[position] = GroceryItems(name = input, quantity = currentItem.quantity)
             }
 
-        // 4. Save quantity changes from the Spinner
+        // Set up the listener for quantity changes
         holder.productAmount.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                 currentItem.quantity = options[pos].toInt()
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
-
-
     }
-
-
-
-
-
 
     fun addNewItem() {
 
-        //Tell the RecyclerView to draw a new row at the end
+        // Add a new item to the list
         listOfProducts.add(GroceryItems(DEFAULT_ID, GENERAL_TYPE, DEFAULT_PRODUCT_NAME, DEFAULT_ITEM_QUANTITY))
         notifyItemInserted(listOfProducts.size - 1)
     }
@@ -101,22 +83,21 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
     fun saveItems(){
 
         for (item in listOfProducts) {
-            // Access the properties directly
+
             println("Item: ${item.name}, Quantity: ${item.quantity}")
         }
 
         finalSortedList= sortGroceryInput(listOfProducts)
-      notifyDataSetChanged()
+            //notifyDataSetChanged()
 
-for (item in finalSortedList) {
-            // Access the properties directly
+        for (item in finalSortedList) {
+
             println("Item: ${item.name}, Quantity: ${item.quantity}")
         }
-
-
     }
 
     override fun getItemCount(): Int {
+        // Return the number of items in the list
         return listOfProducts.size
     }
 

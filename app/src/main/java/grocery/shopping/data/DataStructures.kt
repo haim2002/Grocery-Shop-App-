@@ -8,8 +8,4 @@ class DataStructures {
         val dateCreated: Long = System.currentTimeMillis(),
         val userId: String? = null
     )
-
-
-
-
 }

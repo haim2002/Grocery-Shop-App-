@@ -20,14 +20,15 @@ class ListCreator : AppCompatActivity() {
             insets
         }
 
+        // Set up the RecyclerView
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+        // Initialize the adapter
         myAdapter = ListCreatorAdapter()
+        // Set the adapter and layout manager for the RecyclerView
         recyclerView.adapter = myAdapter
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-
-
     }
-
+//implementing menu in the app
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.list_menu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -35,6 +36,7 @@ class ListCreator : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
+        // Check which item was clicked
         return when (item.itemId) {
             R.id.addListItem -> {
                 myAdapter.addNewItem()
