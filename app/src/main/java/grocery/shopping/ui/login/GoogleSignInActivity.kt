@@ -93,9 +93,9 @@ class GoogleSignInActivity : AppCompatActivity() {
 
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
-            // Create an intent to go to your main screen
+            // Create an intent to start the MainActivity
             val intent = Intent(this, MainActivity::class.java)
-            // This clears the backstack so the user can't go back to login
+            //prevents back option when logging in
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish() // Closes the LoginActivity
