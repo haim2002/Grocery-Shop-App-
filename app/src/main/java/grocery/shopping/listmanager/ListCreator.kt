@@ -1,4 +1,4 @@
-package grocery.shopping
+package grocery.shopping.listmanager
 
 import android.os.Bundle
 import android.view.Menu
@@ -7,7 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import grocery.shopping.listmanager.ListCreatorAdapter
+import grocery.shopping.R
+
 private lateinit var myAdapter: ListCreatorAdapter
 class ListCreator : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,14 +23,15 @@ class ListCreator : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         // Set up the RecyclerView
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+
         // Initialize the adapter
         myAdapter = ListCreatorAdapter()
+
         // Set the adapter and layout manager for the RecyclerView
         recyclerView.adapter = myAdapter
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(this)
     }
 //implementing menu in the app
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -35,7 +40,6 @@ class ListCreator : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         // Check which item was clicked
         return when (item.itemId) {
             R.id.addListItem -> {

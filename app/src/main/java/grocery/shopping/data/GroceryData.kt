@@ -1,13 +1,5 @@
 package grocery.shopping.data
 
-import grocery.shopping.DAIRY_TYPE
-import grocery.shopping.DEFAULT_ID
-import grocery.shopping.DEFAULT_ITEM_QUANTITY
-import grocery.shopping.DEFAULT_PRODUCT_NAME
-import grocery.shopping.FRUIT_TYPE
-import grocery.shopping.GENERAL_TYPE
-import grocery.shopping.VEGETABLES_TYPE
-
 val typeDetermine = mapOf(
 
     "תפוח" to "Fruit"

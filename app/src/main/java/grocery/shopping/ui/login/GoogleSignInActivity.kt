@@ -101,4 +101,7 @@ class GoogleSignInActivity : AppCompatActivity() {
             finish() // Closes the LoginActivity
         }
     }
+
+
+
 }

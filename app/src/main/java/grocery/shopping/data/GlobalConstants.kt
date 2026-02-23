@@ -1,4 +1,4 @@
-package grocery.shopping
+package grocery.shopping.data
 
 const val MIN_ITEM_QUANTITY = 1
 const val MAX_ITEM_QUANTITY = 15
