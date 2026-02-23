@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Grocery_Shopping">
         <activity
-            android:name=".ListCreator"
+            android:name=".listmanager.ListCreator"
             android:exported="false"
             android:theme="@style/Theme.Grocery_Shopping"/>
         <activity

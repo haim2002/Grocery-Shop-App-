@@ -51,18 +51,21 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-auth")
-    // Also add the dependencies for the Credential Manager libraries and specify their versions
-    implementation("androidx.credentials:credentials:1.5.0")
-    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
-    implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-database")
+
+    dependencies {
+        // 1. Import the BoM first using platform
+        implementation(platform(libs.firebase.bom))
+
+        // 2. Add Firebase libraries WITHOUT versions
+        implementation(libs.firebase.auth)
+        implementation(libs.firebase.database)
+        implementation(libs.firebase.analytics)
+
+        // 3. Add Credential Manager & Google ID (these have their own versions)
+        implementation(libs.androidx.credentials)
+        implementation(libs.androidx.credentials.play.services)
+        implementation(libs.googleid)
+    }
 
 
 
