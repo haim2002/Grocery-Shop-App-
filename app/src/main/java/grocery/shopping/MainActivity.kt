@@ -28,9 +28,6 @@ class MainActivity : AppCompatActivity() {
             // If no user, jump to the Google Sign-In screen
             val intent = Intent(this, GoogleSignInActivity::class.java)
             startActivity(intent)
-            //prevents back option when logging in
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
             finish()
         }
         val addNewList: FloatingActionButton = findViewById(R.id.add_btn)
@@ -54,9 +51,6 @@ class MainActivity : AppCompatActivity() {
 
             // going back to log in screen
             val intent = Intent(this, GoogleSignInActivity::class.java)
-
-            //prevents back option when signing out
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
             return true
