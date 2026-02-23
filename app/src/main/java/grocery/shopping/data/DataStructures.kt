@@ -1,11 +1,33 @@
 package grocery.shopping.data
 
-class DataStructures {
+data class CompleteShoppingList(
+        private var _listName: String,
+        private var _items: MutableList<GroceryItems> = mutableListOf(),
+        private val _dateCreated: Long = System.currentTimeMillis(),
+        private val _userIdCreator: String? = null,
+        private var _userIdLastEdited: String? = null
+    ) {
+        // Getters and Setters
 
-    data class NamedShoppingList(
-        var listName: String,
-        val items: MutableList<GroceryItems> = mutableListOf(),
-        val dateCreated: Long = System.currentTimeMillis(),
-        val userId: String? = null
-    )
-}
+        var listName: String
+            get() = _listName
+            set(value) {
+                _listName = value.ifBlank {
+                    DEFAULT_LIST_NAME
+                }
+            }
+
+        var items: MutableList<GroceryItems>
+            get() = _items
+            set(value) { _items = value }
+
+        val dateCreated: Long
+            get() = _dateCreated
+
+        val userIdCreator: String?
+            get() = _userIdCreator
+
+        var userIdLastEdited: String?
+            get() = _userIdLastEdited
+            set(value) { _userIdLastEdited = value }
+    }
