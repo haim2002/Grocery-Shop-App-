@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
+import grocery.shopping.listmanager.ListCreator
 import grocery.shopping.ui.login.GoogleSignInActivity
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +40,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(listIntent)
         }
     }
-
     //implementing menu in the app
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
             // going back to log in screen
             val intent = Intent(this, GoogleSignInActivity::class.java)
+
             //prevents back option when signing out
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
