@@ -4,22 +4,20 @@ import com.google.firebase.database.FirebaseDatabase
 
 object ShoppingRepository {
     // 1. Get a reference to the root of your database
-    private val database = FirebaseDatabase.getInstance().getReference("users")
+    private val database = FirebaseDatabase.getInstance(DATABASE_URL).getReference("all lists")
 
     fun saveList(shoppingList: CompleteShoppingList) {
-        // 2. Use your UserExtensions shortcut to get the current UID
-        val uid = getGoogleUser() ?: return
+        val uid = getGoogleUserID() ?: return
+        val name = getGoogleUserName()
 
-        // 3. Create a unique path: users -> [UID] -> shopping_lists -> [RandomID]
-        val listRef = database.child(uid).child("shopping_lists").push()
+        // 1. Save/Update the Profile Name (so you know who the UID belongs to)
+        database.child(uid).child("profile").child("name").setValue(name)
 
-        // 4. Push the actual object
+        // 2. Save the Shopping List under the "shopping_lists" folder
+        val listRef = database.child(uid).child("shopping_list").push()
+
         listRef.setValue(shoppingList)
-            .addOnSuccessListener {
-                // List is safely in the cloud!
-            }
-            .addOnFailureListener { error ->
-                // Something went wrong (check internet or rules)
-            }
+            .addOnSuccessListener { /* Success! */ }
+            .addOnFailureListener { /* Handle Error */ }
     }
 }
