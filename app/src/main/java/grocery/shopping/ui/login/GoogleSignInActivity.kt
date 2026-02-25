@@ -21,9 +21,6 @@ import grocery.shopping.MainActivity
 import grocery.shopping.R
 import kotlinx.coroutines.launch
 
-/**
- * Demonstrate Firebase Authentication using a Google ID Token.
- */
 class GoogleSignInActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
@@ -43,12 +40,11 @@ class GoogleSignInActivity : AppCompatActivity() {
     }
 
     private fun launchCredentialManager() {
-        // FIX: Hardcode your type 3 Web Client ID to ensure it is never null
+
         val webClientId = "465154159838-rlmvfdvg0nrs1msefdcml7tucpoe7plj.apps.googleusercontent.com"
 
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(webClientId)
-            // FIX: This MUST be false for development/new users
             .setFilterByAuthorizedAccounts(false)
             .setAutoSelectEnabled(false)
             .build()
