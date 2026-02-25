@@ -10,6 +10,7 @@ const val DAIRY_TYPE = "Dairy"
 const val GENERAL_TYPE = "GENERAL"
 const val DEFAULT_ID = 0
 const val DEFAULT_PRODUCT_NAME =""
+const val DATABASE_URL = "https://grocery-shopping-80ca3-default-rtdb.europe-west1.firebasedatabase.app/"
 
 
 

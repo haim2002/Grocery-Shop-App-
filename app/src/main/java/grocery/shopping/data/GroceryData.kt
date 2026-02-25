@@ -5,12 +5,6 @@ val typeDetermine = mapOf(
     "תפוח" to "Fruit"
 )
 
-object GroceryData {
-
-    val currentItems = mutableListOf<GroceryItems>()
-    // list of all saved lists
-    val allSavedLists = mutableMapOf<String, MutableList<GroceryItems>>()
-}
 
 open class GroceryItems(
     open var id: Int = DEFAULT_ID,
