@@ -19,7 +19,8 @@ import grocery.shopping.data.GENERAL_TYPE
 import grocery.shopping.data.GroceryItems
 import grocery.shopping.data.MAX_ITEM_QUANTITY
 import grocery.shopping.data.MIN_ITEM_QUANTITY
-import grocery.shopping.data.getGoogleUser
+import grocery.shopping.data.ShoppingRepository
+import grocery.shopping.data.getGoogleUserName
 import grocery.shopping.data.sortGroceryInput
 
 class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolder>() {
@@ -61,24 +62,33 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
                 ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, options)
             holder.productAmount.adapter = spinnerAdapter
 
-            // Set the selected item based on the current quantity
-            holder.productAmount.setSelection(currentItem.quantity - 1)
-
             // Save name changes from the EditText
             holder.productName.doAfterTextChanged { text ->
                 val input = text.toString()
                 currentItem.name = input
                     // Update the item in the list
-                    listOfProducts[position] =
-                        GroceryItems(name = input, quantity = currentItem.quantity)
+                    listOfProducts[position].name = input
+
             }
+        listOfProducts[position].quantity = holder.productAmount.selectedItem.toString().toInt() +1
+
         // Set up the listener for quantity changes
         holder.productAmount.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                currentItem.quantity = options[pos].toInt()
+                val selectedQty = options[pos].toInt()
+                // Only update if it's a real change
+                if (currentItem.quantity != selectedQty) {
+                    currentItem.quantity = selectedQty
+                }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+
+    override fun getItemCount(): Int {
+        // Return the number of items in the list
+        return listOfProducts.size
     }
 
     fun addNewItem() {
@@ -100,25 +110,32 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
 
             println("Item: ${item.name}, Quantity: ${item.quantity}")
         }
-        getGoogleUser()
-        finalSortedList= sortGroceryInput(listOfProducts)
-        val shoppingList = CompleteShoppingList(
-            _listName = DEFAULT_LIST_NAME,
-            _items = finalSortedList,
-            _userIdCreator = getGoogleUser()
-        )
+        if(isDataValid(listOfProducts)) {
 
-        //notifyDataSetChanged()
-
-        for (item in finalSortedList) {
-
-            println("Item: ${item.name}, Quantity: ${item.quantity}")
+            finalSortedList = sortGroceryInput(listOfProducts)
+            val shoppingList = CompleteShoppingList(
+                _listName = DEFAULT_LIST_NAME,
+                _items = finalSortedList,
+                _userIdCreator = getGoogleUserName(), _timeCreated = System.currentTimeMillis()
+            )
+            ShoppingRepository.saveList(shoppingList)
+            //notifyDataSetChanged()
         }
+        else
+            for (item in finalSortedList) {
+
+                println("Item: ${item.name}, Quantity: ${item.quantity},username: ${getGoogleUserName()}")
+            }
     }
 
-    override fun getItemCount(): Int {
-        // Return the number of items in the list
-        return listOfProducts.size
+    fun isDataValid(listOfProducts: MutableList<GroceryItems>): Boolean {
+
+        return !listOfProducts.isEmpty() && !listOfProducts.all { it.name.isBlank() }
+    }
+
+    fun wasSaved() : Boolean{
+
+        return (isDataValid(listOfProducts))
     }
 
 }

@@ -3,13 +3,13 @@ package grocery.shopping.listmanager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import grocery.shopping.listmanager.ListCreatorAdapter
 import grocery.shopping.R
 
 private lateinit var myAdapter: ListCreatorAdapter
@@ -47,7 +47,16 @@ class ListCreator : AppCompatActivity() {
                 true
             }
             R.id.saveItems -> {
+
                 myAdapter.saveItems()
+
+                val wasSaved = myAdapter.wasSaved()
+                if (wasSaved) {
+                    finish()
+                }
+                else{
+                    Toast.makeText(this, "אי אפשר לשמור רשימה ריקה", Toast.LENGTH_SHORT).show()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
