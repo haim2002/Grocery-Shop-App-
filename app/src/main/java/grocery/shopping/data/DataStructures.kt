@@ -3,7 +3,7 @@ package grocery.shopping.data
 data class CompleteShoppingList(
         private var _listName: String,
         private var _items: MutableList<GroceryItems> = mutableListOf(),
-        private val _dateCreated: Long = System.currentTimeMillis(),
+        private val _timeCreated: Long = System.currentTimeMillis(),
         private val _userIdCreator: String? = null,
         private var _userIdLastEdited: String? = null
     ) {
@@ -22,7 +22,7 @@ data class CompleteShoppingList(
             set(value) { _items = value }
 
         val dateCreated: Long
-            get() = _dateCreated
+            get() = _timeCreated
 
         val userIdCreator: String?
             get() = _userIdCreator
