@@ -7,29 +7,25 @@ val typeDetermine = mapOf(
 
 
 open class GroceryItems(
-    open var id: Int = DEFAULT_ID,
     open val type: String = GENERAL_TYPE,
-    open var name: String = DEFAULT_PRODUCT_NAME,
-    open var quantity: Int= DEFAULT_ITEM_QUANTITY
+    open var name: String,
+    open var quantity: Int
 )
 class Vegetables(
-    id: Int = DEFAULT_ID,
-    name: String = DEFAULT_PRODUCT_NAME,
-    quantity: Int = DEFAULT_ITEM_QUANTITY
+    name: String,
+    quantity: Int
 
-) : GroceryItems(id=id, type=VEGETABLES_TYPE, name=name, quantity=quantity)
+) : GroceryItems(type=VEGETABLES_TYPE, name=name, quantity=quantity)
 class Fruit(
-    id: Int = DEFAULT_ID,
-    name: String = DEFAULT_PRODUCT_NAME,
-    quantity: Int = DEFAULT_ITEM_QUANTITY
+    name: String,
+    quantity: Int
 
-) : GroceryItems(id=id, type= FRUIT_TYPE, name=name, quantity=quantity)
+) : GroceryItems(type= FRUIT_TYPE, name=name, quantity=quantity)
 class Dairy(
-    id: Int = DEFAULT_ID,
-    name: String = DEFAULT_PRODUCT_NAME,
-    quantity: Int = DEFAULT_ITEM_QUANTITY
+    name: String,
+    quantity: Int
 
-) : GroceryItems(id=id, type= DAIRY_TYPE, name=name, quantity=quantity)
+) : GroceryItems(type= DAIRY_TYPE, name=name, quantity=quantity)
 
 fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>) :MutableList<GroceryItems>{
 
@@ -42,7 +38,7 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>) :MutableList<Gro
     for (product in listOfProducts) {
         val itemQuantity = product.quantity
         val productName = product.name
-        val detectedType = typeDetermine[productName] ?: "GENERAL"
+        val detectedType = typeDetermine[productName]
 
         if (productName.isNotBlank()) {
             when (detectedType) {
