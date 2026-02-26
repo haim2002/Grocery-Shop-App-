@@ -15,6 +15,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="@string/add_new_item"
-        app:srcCompat="@drawable/addbtn" />
+        app:srcCompat="@drawable/addbtn"
+        tools:ignore="ClassNameCheck" />
 
 </FrameLayout>
