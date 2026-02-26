@@ -4,7 +4,6 @@ data class CompleteShoppingList(
         private var _listName: String,
         private var _items: MutableList<GroceryItems> = mutableListOf(),
         private val _timeCreated: Long = System.currentTimeMillis(),
-        private val _userIdCreator: String? = null,
         private var _userIdLastEdited: String? = null
     ) {
         // Getters and Setters
@@ -23,9 +22,6 @@ data class CompleteShoppingList(
 
         val dateCreated: Long
             get() = _timeCreated
-
-        val userIdCreator: String?
-            get() = _userIdCreator
 
         var userIdLastEdited: String?
             get() = _userIdLastEdited
