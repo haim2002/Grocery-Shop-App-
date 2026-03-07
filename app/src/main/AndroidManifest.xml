@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -12,10 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Grocery_Shopping">
         <activity
+            android:name=".ListDisplayer"
+            android:exported="false" />
+        <activity
             android:name=".creator.ListCreator"
-            android:label="הוספת רשימה"
             android:exported="false"
-            android:theme="@style/Theme.Grocery_Shopping"/>
+            android:label="הוספת רשימה"
+            android:theme="@style/Theme.Grocery_Shopping" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
