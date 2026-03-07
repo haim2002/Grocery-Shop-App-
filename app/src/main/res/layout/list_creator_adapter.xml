@@ -26,7 +26,6 @@
         android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:minHeight="48dp"
-        android:textAlignment="viewStart"
         android:textColor="#212121"
         android:textColorHint="#757575"
         app:layout_constraintTop_toTopOf="parent"
