@@ -18,5 +18,6 @@
     <string name="addItemText">הוסף</string>
     <string name="save_button_text">שמור</string>
     <string name="delete_button_text">מחק</string>
+    <string name="x">X</string>
 
 </resources>
