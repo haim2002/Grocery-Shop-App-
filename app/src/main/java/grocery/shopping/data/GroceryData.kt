@@ -11,23 +11,26 @@ open class GroceryItems(
     open var name: String,
     open var quantity: Int
 )
+
 class Vegetables(
     name: String,
     quantity: Int
 
-) : GroceryItems(type=VEGETABLES_TYPE, name=name, quantity=quantity)
+) : GroceryItems(type = VEGETABLES_TYPE, name = name, quantity = quantity)
+
 class Fruit(
     name: String,
     quantity: Int
 
-) : GroceryItems(type= FRUIT_TYPE, name=name, quantity=quantity)
+) : GroceryItems(type = FRUIT_TYPE, name = name, quantity = quantity)
+
 class Dairy(
     name: String,
     quantity: Int
 
-) : GroceryItems(type= DAIRY_TYPE, name=name, quantity=quantity)
+) : GroceryItems(type = DAIRY_TYPE, name = name, quantity = quantity)
 
-fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>) :MutableList<GroceryItems>{
+fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<GroceryItems> {
 
     val listOfVegetables: MutableList<Vegetables> = mutableListOf()
     val listOfFruit: MutableList<Fruit> = mutableListOf()
@@ -55,7 +58,12 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>) :MutableList<Gro
                 }
 
                 else -> {
-                    listOfGeneralItems.add(GroceryItems(name = productName, quantity = itemQuantity))
+                    listOfGeneralItems.add(
+                        GroceryItems(
+                            name = productName,
+                            quantity = itemQuantity
+                        )
+                    )
                 }
             }
         }
