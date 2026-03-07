@@ -3,16 +3,17 @@ package grocery.shopping.creator
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.R
+import kotlinx.coroutines.launch
 
-private lateinit var myAdapter: ListCreatorAdapter
+private lateinit var listAdapter: ListCreatorAdapter
 private lateinit var recyclerView: RecyclerView
 
 class ListCreator : AppCompatActivity() {
@@ -28,16 +29,17 @@ class ListCreator : AppCompatActivity() {
 
         }
         // Set up the RecyclerView
-        recyclerView= findViewById(R.id.recyclerView)
+        recyclerView = findViewById(R.id.recyclerView)
 
         // Initialize the adapter
-        myAdapter = ListCreatorAdapter()
+        listAdapter = ListCreatorAdapter()
 
         // Set the adapter and layout manager for the RecyclerView
-        recyclerView.adapter = myAdapter
+        recyclerView.adapter = listAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
-//implementing menu in the app
+
+    //implementing menu in the app
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.list_menu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -55,27 +57,27 @@ class ListCreator : AppCompatActivity() {
             }
             // Handle adding list item
             R.id.addListItem -> {
-                myAdapter.addNewItem(recyclerView)
+                listAdapter.addNewItem(recyclerView)
                 true
             }
             // Handle saving list
             R.id.saveItems -> {
 
-                myAdapter.saveItems()
-                // validating if the list was saved
-                val wasSaved = myAdapter.wasSaved()
-                if (wasSaved) {
-                    //finish()
+                lifecycleScope.launch {
+                    listAdapter.saveItems(recyclerView)
+                    // if the list was saved, finish the activity
+                    if (listAdapter.wasSaved()) finish()
                 }
-                else{
-                    Toast.makeText(this, "אי אפשר לשמור רשימה ריקה", Toast.LENGTH_SHORT).show()
-                }
+
                 true
+
             }
+            // Handle deleting list item
             R.id.deleteListItem -> {
-                myAdapter.removeItem(recyclerView.getChildAdapterPosition(recyclerView.focusedChild))
+                listAdapter.removeItem(recyclerView.getChildAdapterPosition(recyclerView.focusedChild))
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
