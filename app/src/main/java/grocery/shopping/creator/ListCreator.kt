@@ -3,6 +3,7 @@ package grocery.shopping.creator
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -64,9 +65,23 @@ class ListCreator : AppCompatActivity() {
             R.id.saveItems -> {
 
                 lifecycleScope.launch {
-                    listAdapter.saveItems(recyclerView)
-                    // if the list was saved, finish the activity
-                    if (listAdapter.wasSaved()) finish()
+                    when (val result = listAdapter.saveItems(recyclerView)) {
+                        is ListCreatorAdapter.SaveResult.Success -> {
+                            finish() // Only close if it actually reached the cloud
+                        }
+
+                        is ListCreatorAdapter.SaveResult.EmptyList -> {
+                            Toast.makeText(this@ListCreator, "אי אפשר לשמור רשימה ריקה", Toast.LENGTH_SHORT).show()
+                        }
+
+                        is ListCreatorAdapter.SaveResult.NetworkError -> {
+                            Toast.makeText(this@ListCreator, "יש תקלה ברשת", Toast.LENGTH_SHORT).show()
+                        }
+
+                        is ListCreatorAdapter.SaveResult.CanceledByUserInfo -> {
+                            Toast.makeText(this@ListCreator, "שמירת הרשימה בוטלה", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
 
                 true

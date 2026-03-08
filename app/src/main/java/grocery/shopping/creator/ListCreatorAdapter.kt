@@ -22,8 +22,10 @@ import grocery.shopping.data.GroceryItems
 import grocery.shopping.data.MAX_ITEM_QUANTITY
 import grocery.shopping.data.MIN_ITEM_QUANTITY
 import grocery.shopping.data.ShoppingRepository
+import grocery.shopping.data.UNNAMED_LIST
 import grocery.shopping.data.getGoogleUserName
 import grocery.shopping.data.sortGroceryInput
+import kotlinx.coroutines.channels.ChannelResult.Companion.success
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -31,10 +33,10 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
 
     val listOfProducts: MutableList<GroceryItems> = mutableListOf()
     var finalSortedList: MutableList<GroceryItems> = mutableListOf()
-    var listInfo: ListInfo = ListInfo(
-        _listName = null,
+    var metadataList: ListInfo = ListInfo(
+        listName = UNNAMED_LIST,
        // _items = mutableListOf(),
-         _creatorName = getGoogleUserName() ?: "unknown user"
+         creatorName = getGoogleUserName()
     )
 
 /*
@@ -151,30 +153,44 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
         }
     }
 
-    suspend fun saveItems(recyclerView: RecyclerView) {
+    suspend fun saveItems(recyclerView: RecyclerView): SaveResult {
 
-        if (isDataValid(listOfProducts)) {
-
-            val listName = choosingListNameInDialog(recyclerView.context)
-
-            if (listName != null) {
-
-                finalSortedList = sortGroceryInput(listOfProducts)
-
-                listInfo = ListInfo(
-                    _listName = listName,
-                    //_items = finalSortedList,
-                    _creatorName = getGoogleUserName() ?: "unknown user"
-                )
-
-                ShoppingRepository.saveList(finalSortedList,listInfo)
-
-                //notifyDataSetChanged()
-            }
-        } else {
-            Toast.makeText(recyclerView.context, "אי אפשר לשמור רשימה ריקה", Toast.LENGTH_SHORT)
-                .show()
+        // 1. Check if data is valid
+        if (!isDataValid(listOfProducts)) {
+            return SaveResult.EmptyList
         }
+
+        // 2. Get the list name from the user
+        val listName = choosingListNameInDialog(recyclerView.context)
+
+        // 3. Check if user canceled or didn't name the list
+        if (listName == UNNAMED_LIST) {
+            return SaveResult.CanceledByUserInfo
+        }
+
+        // 4. Prepare the data
+        val finalSortedList = sortGroceryInput(listOfProducts)
+        val metadataList = ListInfo(
+            listName = listName,
+            creatorName = getGoogleUserName()
+        )
+
+        // 5. Attempt to save to Firebase
+        val result = ShoppingRepository.saveList(finalSortedList, metadataList)
+
+        // 6. Return based on the Repository's Result
+        return if (result.isSuccess) {
+            // Optional: notifyDataSetChanged() if you plan to keep the activity open
+            SaveResult.Success
+        } else {
+            SaveResult.NetworkError
+        }
+    }
+    sealed class SaveResult {
+        object Success : SaveResult()
+        object EmptyList : SaveResult()
+        object CanceledByUserInfo : SaveResult()
+        object NetworkError : SaveResult()
     }
 
     // check if the list is valid
@@ -186,10 +202,10 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
     // check if the list was saved
     fun wasSaved(): Boolean {
 
-        return (listInfo.listName != null)
+        return (metadataList.listName == "not yet named")
     }
 
-    suspend fun choosingListNameInDialog(context: Context): String? =
+    suspend fun choosingListNameInDialog(context: Context): String =
         suspendCancellableCoroutine { continuation ->
             val inputField = EditText(context).apply {
                 hint = "הרשימה שלי"
@@ -206,12 +222,12 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
                 }
                 .setNegativeButton("ביטול") { dialog, _ ->
                     // Resume with null if canceled
-                    continuation.resume(null)
+                    continuation.resume(UNNAMED_LIST)
                     dialog.dismiss()
                 }
                 .setOnCancelListener {
                     // Important: handle if user clicks outside the dialog
-                    continuation.resume(null)
+                    continuation.resume(UNNAMED_LIST)
                 }
                 .create()
 

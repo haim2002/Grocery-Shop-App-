@@ -2,12 +2,12 @@ package grocery.shopping.data
 
 import com.google.firebase.auth.FirebaseAuth
 
-fun getGoogleUserName(): String? {
+fun getGoogleUserName(): String {
 
     val user = FirebaseAuth.getInstance().currentUser
     val displayName = user?.displayName
 
-    return displayName
+    return displayName ?: "unknown user"
 }
 fun getGoogleUserID(): String? {
 
