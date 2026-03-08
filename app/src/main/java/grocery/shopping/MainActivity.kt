@@ -7,14 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import grocery.shopping.creator.ListCreator
-import grocery.shopping.data.ShoppingRepository.fetchUserSummaries
+import grocery.shopping.data.ShoppingRepository.fetchListMetadata
 import grocery.shopping.ui.login.GoogleSignInActivity
 
+lateinit var myAdapter: MetadataListAdapter
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,24 +41,20 @@ class MainActivity : AppCompatActivity() {
             startActivity(listIntent)
         }
 
-/*
         // 1. Find the view
-        val recyclerView = findViewById<RecyclerView>(R.id.mainRecyclerView)
+        fetchListMetadata { listFromFirebase ->
+            // Switch back to the UI thread to prevent the crash
+            runOnUiThread {
+                myAdapter = MetadataListAdapter(listFromFirebase)
 
-// 2. Set the Grid Manager (Don't forget this part for the squares!)
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
-
-// 3. Initialize the adapter with a lowercase 'm' in mutableListOf
-        val myAdapter = MetadataListAdapter(mutableListOf())
-        recyclerView.adapter = myAdapter
-
-// 4. Fetch the data and update the UI when it arrives
-        fetchUserSummaries { listFromFirebase ->
-            // This is the "Pizza is ready" callback
-            myAdapter.updateData(listFromFirebase)
+                val recyclerView = findViewById<RecyclerView>(R.id.mainRecyclerView)
+                recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                recyclerView.adapter = myAdapter
+                myAdapter.updateData(listFromFirebase)
+            }
         }
 
- */
+
     }
 
 
