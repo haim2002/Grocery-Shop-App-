@@ -8,17 +8,16 @@ import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.data.GENERAL_TYPE
 import grocery.shopping.data.GroceryItems
 
-class ListDisplayAdapter : RecyclerView.Adapter<ListDisplayAdapter.ItemViewHolder>() {
+class ListDisplayAdapter(var listOfProducts: MutableList<GroceryItems>) : RecyclerView.Adapter<ListDisplayAdapter.ItemViewHolder>() {
 
-    val listOfProducts: MutableList<GroceryItems> = mutableListOf()
-
+/*
     init {
 
         listOfProducts.add(GroceryItems(GENERAL_TYPE, "קקק", 8))
         listOfProducts.add(GroceryItems(GENERAL_TYPE, "בשדב", 5))
 
     }
-
+*/
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         //reference to the views in the layout
         val productName: TextView = itemView.findViewById(R.id.product_display)
