@@ -1,21 +1,34 @@
 package grocery.shopping
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import grocery.shopping.data.GroceryItems
-import grocery.shopping.data.ShoppingRepository.fetchSpecificList
+import grocery.shopping.creator.ListCreator
+import grocery.shopping.data.ShoppingRepository.fetchGroceryList
 
 private lateinit var listAdapter: ListDisplayAdapter
 private lateinit var recyclerView: RecyclerView
+private lateinit var listId: String
+
 class ListDisplayer : AppCompatActivity() {
+    val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+
+                refreshList()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,16 +43,16 @@ class ListDisplayer : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
 
         // Initialize the adapter
-        val listId = intent.getStringExtra("LIST_ID")
-        Log.d("MY_TAG", "listId: $listId")
+        listId = intent.getStringExtra("LIST_ID").toString()
+        Log.d("ListDisplayerID", "listId: $listId")
 
-            fetchSpecificList(listId) { listFromFirebase ->
-                listAdapter = ListDisplayAdapter(listFromFirebase)
-                // Set the adapter and layout manager for the RecyclerView
-                recyclerView.adapter = listAdapter
-                recyclerView.layoutManager = LinearLayoutManager(this)
+        fetchGroceryList(listId) { listFromFirebase ->
+            listAdapter = ListDisplayAdapter(listFromFirebase)
+            // Set the adapter and layout manager for the RecyclerView
+            recyclerView.adapter = listAdapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
 
-            }
+        }
 
 
     }
@@ -60,10 +73,34 @@ class ListDisplayer : AppCompatActivity() {
                 true
             }
 
+            R.id.editList -> {
+
+                Log.d("ListDisplayerID2", "listId: $listId")
+                val intent = Intent(this, ListCreator::class.java)
+                intent.putExtra("ListID", listId)
+                startForResult.launch(intent)
+                true
+            }
+
             else -> {
                 super.onOptionsItemSelected(item)
             }
         }
     }
 
+    fun refreshList() {
+
+
+        fetchGroceryList(listId) { listFromFirebase ->
+            listAdapter = ListDisplayAdapter(listFromFirebase)
+            Log.d("ListDisplayerDebug", "listId: $listId")
+            Log.d("ListDisplayerDebug", "listFromFirebase: $listFromFirebase")
+            // Set the adapter and layout manager for the RecyclerView
+            recyclerView.adapter = listAdapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            listAdapter.notifyDataSetChanged()
+
+        }
+
+    }
 }
