@@ -1,4 +1,5 @@
 package grocery.shopping
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -12,10 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import grocery.shopping.creator.ListCreator
-import grocery.shopping.data.ShoppingRepository.fetchListMetadata
+import grocery.shopping.data.ShoppingRepository.fetchAllMetadata
 import grocery.shopping.ui.login.GoogleSignInActivity
 
 lateinit var myAdapter: MetadataListAdapter
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +43,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(listIntent)
         }
 
-        // 1. Find the view
-        fetchListMetadata { listFromFirebase ->
+
+        fetchAllMetadata { listFromFirebase ->
             // Switch back to the UI thread to prevent the crash
             runOnUiThread {
                 myAdapter = MetadataListAdapter(listFromFirebase)
@@ -56,7 +58,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
 
 
     //implementing menu in the app
@@ -79,9 +80,10 @@ class MainActivity : AppCompatActivity() {
             return true
         }
 
+
         if (item.itemId == R.id.settings) {
 
-           val intent = Intent(this, ListDisplayer::class.java)
+            val intent = Intent(this, ListDisplayer::class.java)
             startActivity(intent)
             finish()
             return true
