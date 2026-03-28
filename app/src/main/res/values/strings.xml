@@ -19,5 +19,8 @@
     <string name="save_button_text">שמור</string>
     <string name="delete_button_text">מחק</string>
     <string name="x">X</string>
+    <string name="created_by">נוצר על ידי: %s</string>
+    <string name="updated_by">עודכן על ידי: %s</string>
+    <string name="list_date">תאריך: %s</string>
 
 </resources>

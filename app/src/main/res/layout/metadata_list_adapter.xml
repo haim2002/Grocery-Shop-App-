@@ -19,14 +19,11 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/textName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Grocery List"
+            android:id="@+id/listName"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" android:layout_marginTop="8dp" android:text="Grocery List"
             android:textColor="#212121"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:textSize="20sp" android:textStyle="bold"
             android:maxLines="2"
             android:ellipsize="end"
             android:gravity="center" />
@@ -35,26 +32,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="end">
 
             <TextView
-                android:id="@+id/textCreator"
-                android:layout_width="match_parent"
+                android:id="@+id/creatorName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="By: John Doe"
+                android:text="נוצר על ידי: John Doe"
                 android:textColor="#1976D2"
                 android:textSize="12sp"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:textDirection="rtl" />
 
             <TextView
-                android:id="@+id/textDate"
-                android:layout_width="match_parent"
+                android:id="@+id/listUpdatedBy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="עודכן על ידי: Jane Doe"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp"
+                android:textDirection="rtl" />
+
+            <TextView
+                android:id="@+id/listDate"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="March 6, 2026"
                 android:textColor="#757575"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:layout_marginTop="1dp" />
 
         </LinearLayout>
 
     </RelativeLayout>
+
+
 </com.google.android.material.card.MaterialCardView>
