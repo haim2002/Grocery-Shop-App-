@@ -14,14 +14,16 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MetadataListAdapter(var lists: List<ListInfo>) : RecyclerView.Adapter<MetadataListAdapter.ItemViewHolder>() {
+class MetadataListAdapter(var lists: List<ListInfo>) :
+    RecyclerView.Adapter<MetadataListAdapter.ItemViewHolder>() {
 
 
     class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val listName: TextView = view.findViewById(R.id.textName)
-        var creatorName: TextView = view.findViewById(R.id.textCreator)
-        val listDate: TextView = view.findViewById(R.id.textDate)
+        val listName: TextView = view.findViewById(R.id.listName)
+        var createdBy: TextView = view.findViewById(R.id.creatorName)
+        val listDate: TextView = view.findViewById(R.id.listDate)
+        val updatedBy: TextView = view.findViewById(R.id.listUpdatedBy)
 
 
     }
@@ -38,16 +40,19 @@ class MetadataListAdapter(var lists: List<ListInfo>) : RecyclerView.Adapter<Meta
     val selectedPositions = mutableSetOf<Int>()
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        val context = holder.itemView.context
         val currentMetadata = lists[position]
-        Log.d("MY_TAG", "currentMetadata: $currentMetadata")
+        Log.d("MetadataListAdapter", "currentMetadata: $currentMetadata")
 
         holder.listName.text = currentMetadata.listName
-        holder.creatorName.text = currentMetadata.creatorName
-        holder.listDate.text = SimpleDateFormat("dd/MM/yy",Locale.getDefault()).format(Date(currentMetadata.timeCreated))
-        Log.d("MY_TAG", "onBindViewHolder: ${currentMetadata.listName}")
-        Log.d("MY_TAG", "onBindViewHolder: ${currentMetadata.creatorName}")
-        Log.d("MY_TAG", "onBindViewHolder: ${currentMetadata.timeCreated}")
-        Log.d("MY_TAG", "onBindViewHolder: ${currentMetadata.firebaseKey}")
+        holder.createdBy.text = context.getString(R.string.created_by, currentMetadata.createdBy)
+        holder.updatedBy.text = context.getString(R.string.updated_by, currentMetadata.updatedBy)
+        holder.listDate.text = context.getString(R.string.list_date, setDateFormat(currentMetadata.timeCreated))
+
+        Log.d("MetadataListAdapter", "onBindViewHolder: ${currentMetadata.listName}")
+        Log.d("MetadataListAdapter", "onBindViewHolder: ${currentMetadata.createdBy}")
+        Log.d("MetadataListAdapter", "onBindViewHolder: ${currentMetadata.timeCreated}")
+        Log.d("MetadataListAdapter", "onBindViewHolder: ${currentMetadata.firebaseKey}")
 
 
 
@@ -56,15 +61,12 @@ class MetadataListAdapter(var lists: List<ListInfo>) : RecyclerView.Adapter<Meta
         )
 
 
-
-
-
         // Handle the "Button" click
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
-            Log.d("MY_TAG", "listName: ${ holder.listName.text}")
-            Log.d("MY_TAG", "listCreator: ${ holder.creatorName.text}")
-            Log.d("MY_TAG", "listDate: ${ holder.listDate.text}")
+            Log.d("MetadataListAdapter", "listName: ${holder.listName.text}")
+            Log.d("MetadataListAdapter", "listCreator: ${holder.createdBy.text}")
+            Log.d("MetadataListAdapter", "listDate: ${holder.listDate.text}")
             val intent = Intent(context, ListDisplayer::class.java)
             intent.putExtra("LIST_ID", currentMetadata.firebaseKey)
             context.startActivity(intent)
@@ -90,5 +92,11 @@ class MetadataListAdapter(var lists: List<ListInfo>) : RecyclerView.Adapter<Meta
         this.lists = newList
         notifyDataSetChanged()
     }
+    fun setDateFormat( timeCreated: Long) : String{
 
+      return  SimpleDateFormat(
+            "dd/MM/yy HH:mm", // הוספנו HH:mm לשעה ודקות
+            Locale.getDefault()
+        ).format(Date(timeCreated))
+    }
 }
