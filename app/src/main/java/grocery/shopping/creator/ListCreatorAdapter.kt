@@ -2,6 +2,8 @@ package grocery.shopping.creator
 
 import android.app.AlertDialog
 import android.content.Context
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,27 +27,23 @@ import grocery.shopping.data.ShoppingRepository
 import grocery.shopping.data.UNNAMED_LIST
 import grocery.shopping.data.getGoogleUserName
 import grocery.shopping.data.sortGroceryInput
-import kotlinx.coroutines.channels.ChannelResult.Companion.success
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolder>() {
+class ListCreatorAdapter(
+    var listOfProducts: MutableList<GroceryItems>,
+    var metadataList: ListInfo,
+    var listID: String?
+) : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolder>() {
 
-    val listOfProducts: MutableList<GroceryItems> = mutableListOf()
-    var finalSortedList: MutableList<GroceryItems> = mutableListOf()
-    var metadataList: ListInfo = ListInfo(
-        listName = UNNAMED_LIST,
-       // _items = mutableListOf(),
-         creatorName = getGoogleUserName()
-    )
 
-/*
 
-        init{
+    init {
 
-            listOfProducts.add(GroceryItems(GENERAL_TYPE, DEFAULT_PRODUCT_NAME, DEFAULT_ITEM_QUANTITY))
-        }
-*/
+        Log.d("ListCreatorAdapter", "listOfProducts: $listOfProducts")
+    }
+
+
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         //reference to the views in the layout
         val productName: EditText = itemView.findViewById(R.id.productName)
@@ -62,36 +60,44 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        // make reference of current item in the list
         val currentItem = listOfProducts[position]
 
-        // Set up the EditText with the current name
+        // 1. CLEANUP: Remove the old listener stored in the tag
+        (holder.productName.tag as? TextWatcher)?.let {
+            holder.productName.removeTextChangedListener(it)
+        }
+
+        // 2. SET TEXT: Safe to do now without triggering the old listener
         holder.productName.setText(currentItem.name)
 
-        // Set up the spinner with options
+        // 3. ATTACH NEW LISTENER: Update the data model as the user types
+        val watcher = holder.productName.doAfterTextChanged { text ->
+            currentItem.name = text.toString()
+            // No need for listOfProducts[position].name = input because
+            // currentItem is already a reference to that same object.
+        }
+        holder.productName.tag = watcher
+
+        // 4. SPINNER SETUP
         val options = (MIN_ITEM_QUANTITY..MAX_ITEM_QUANTITY).toList().map { it.toString() }
-        val spinnerAdapter =
-            ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, options)
+        val spinnerAdapter = ArrayAdapter(
+            holder.itemView.context,
+            android.R.layout.simple_spinner_item,
+            options
+        )
         holder.productAmount.adapter = spinnerAdapter
 
-        // Save name changes from the EditText
-        holder.productName.doAfterTextChanged { text ->
-            val input = text.toString()
-            currentItem.name = input
-            // Update the item in the list
-            listOfProducts[position].name = input
+        // 5. SPINNER SELECTION: Show the saved quantity
+        val selectionIndex = (currentItem.quantity - MIN_ITEM_QUANTITY).coerceAtLeast(0)
+        holder.productAmount.setSelection(
+            selectionIndex,
+            false
+        ) // 'false' prevents triggering listener immediately
 
-        }
-        listOfProducts[position].quantity = holder.productAmount.selectedItem.toString().toInt() + 1
-
-        // Set up the listener for quantity changes
+        // 6. SPINNER LISTENER: Update the data model
         holder.productAmount.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                val selectedQty = options[pos].toInt()
-                // Only update if it's a real change
-                if (currentItem.quantity != selectedQty) {
-                    currentItem.quantity = selectedQty
-                }
+                currentItem.quantity = options[pos].toInt()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -155,37 +161,64 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
 
     suspend fun saveItems(recyclerView: RecyclerView): SaveResult {
 
-        // 1. Check if data is valid
+
+        //  check if data is valid
         if (!isDataValid(listOfProducts)) {
             return SaveResult.EmptyList
         }
 
-        // 2. Get the list name from the user
-        val listName = choosingListNameInDialog(recyclerView.context)
 
-        // 3. Check if user canceled or didn't name the list
+
+
+        // check if user canceled or didn't name the list
+        /*
         if (listName == UNNAMED_LIST) {
             return SaveResult.CanceledByUserInfo
         }
-
-        // 4. Prepare the data
+*/
+        // prepare the data
+        Log.d("list before sorting", "listOfProducts: $listOfProducts")
         val finalSortedList = sortGroceryInput(listOfProducts)
-        val metadataList = ListInfo(
-            listName = listName,
-            creatorName = getGoogleUserName()
-        )
+        Log.d("list after sorting", "listOfProducts: $finalSortedList")
+
+
 
         // 5. Attempt to save to Firebase
-        val result = ShoppingRepository.saveList(finalSortedList, metadataList)
+
+        if (listID == null) {
+
+            val listName = choosingListNameInDialog(recyclerView.context)
+            metadataList = ListInfo(
+                listName = listName,
+                createdBy = getGoogleUserName()
+            )
+            val result = ShoppingRepository.saveList(finalSortedList, metadataList)
+            return if (result.isSuccess) {
+
+                SaveResult.Success
+            } else {
+                SaveResult.NetworkError
+            }
+        } else {
+
+            metadataList.timeCreated = System.currentTimeMillis()
+            metadataList.updatedBy = getGoogleUserName()
+            Log.d("FirebaseDebug", "Sending Update to ID: '$listID'")
+            val result =
+                ShoppingRepository.updateListInFirebase(listID!!, finalSortedList, metadataList)
+            return if (result.isSuccess) {
+
+                SaveResult.Success
+            } else {
+                SaveResult.NetworkError
+            }
+        }
+
 
         // 6. Return based on the Repository's Result
-        return if (result.isSuccess) {
-            // Optional: notifyDataSetChanged() if you plan to keep the activity open
-            SaveResult.Success
-        } else {
-            SaveResult.NetworkError
-        }
+
     }
+
     sealed class SaveResult {
         object Success : SaveResult()
         object EmptyList : SaveResult()
@@ -199,11 +232,6 @@ class ListCreatorAdapter : RecyclerView.Adapter<ListCreatorAdapter.ItemViewHolde
         return listOfProducts.isNotEmpty() && listOfProducts.all { it.name.isNotBlank() }
     }
 
-    // check if the list was saved
-    fun wasSaved(): Boolean {
-
-        return (metadataList.listName == "not yet named")
-    }
 
     suspend fun choosingListNameInDialog(context: Context): String =
         suspendCancellableCoroutine { continuation ->

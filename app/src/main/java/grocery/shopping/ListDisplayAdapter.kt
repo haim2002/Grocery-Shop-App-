@@ -10,14 +10,14 @@ import grocery.shopping.data.GroceryItems
 
 class ListDisplayAdapter(var listOfProducts: MutableList<GroceryItems>) : RecyclerView.Adapter<ListDisplayAdapter.ItemViewHolder>() {
 
-/*
-    init {
+    /*
+        init {
 
-        listOfProducts.add(GroceryItems(GENERAL_TYPE, "קקק", 8))
-        listOfProducts.add(GroceryItems(GENERAL_TYPE, "בשדב", 5))
+            listOfProducts.add(GroceryItems(GENERAL_TYPE, "קקק", 8))
+            listOfProducts.add(GroceryItems(GENERAL_TYPE, "בשדב", 5))
 
-    }
-*/
+        }
+    */
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         //reference to the views in the layout
         val productName: TextView = itemView.findViewById(R.id.product_display)
