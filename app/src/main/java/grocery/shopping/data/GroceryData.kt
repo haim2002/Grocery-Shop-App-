@@ -1,10 +1,18 @@
 package grocery.shopping.data
 
+
 open class GroceryItems(
     open val type: String = GENERAL_TYPE,
     open var name: String = DEFAULT_PRODUCT_NAME,
     open var quantity: Int = DEFAULT_ITEM_QUANTITY
 )
+{
+
+    override fun toString(): String {
+        return "GroceryItem(name='$name', qty=$quantity)"
+    }
+}
+
 
 class Vegetables(
     name: String,
@@ -49,7 +57,7 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<Gro
 
     for (product in listOfProducts) {
         val itemQuantity = product.quantity
-        val productName = product.name
+        val productName = product.name.trim()
         val detectedType = typeDetermine[productName]
 
         if (productName.isNotBlank()) {
@@ -65,12 +73,15 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<Gro
                 DAIRY_TYPE -> {
                     listOfDairy.add(Dairy(name = productName, quantity = itemQuantity))
                 }
+
                 BAKERY_TYPE -> {
                     listOfBakery.add(Bakery(name = productName, quantity = itemQuantity))
                 }
+
                 MEAT_TYPE -> {
                     listOfMeat.add(Meat(name = productName, quantity = itemQuantity))
                 }
+
                 else -> {
                     listOfGeneralItems.add(
                         GroceryItems(
@@ -89,8 +100,12 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<Gro
     finalSortedList.addAll(listOfBakery)
     finalSortedList.addAll(listOfMeat)
     finalSortedList.addAll(listOfGeneralItems)
-    return finalSortedList
+    return finalSortedList.distinctBy {it.name} as MutableList<GroceryItems>
 }
+
+
+
+
 val typeDetermine = mapOf(
 
     // --- Fruits (פירות) ---
@@ -115,6 +130,7 @@ val typeDetermine = mapOf(
 
     // --- Vegetables (ירקות) ---
     "עגבניה" to "Vegetables",
+    "אבוקדו" to "Vegetables",
     "מלפפון" to "Vegetables",
     "פלפל" to "Vegetables",
     "בצל" to "Vegetables",
@@ -159,7 +175,7 @@ val typeDetermine = mapOf(
     "יוגורט" to "Dairy",
     "פרמזן" to "Dairy",
 
-    // --- Bakery (מאפים - תוספת מומלצת) ---
+    // --- Bakery (מאפים) ---
     "לחם" to "Bakery",
     "פיתה" to "Bakery",
     "לחמניה" to "Bakery",
