@@ -11,44 +11,44 @@ import kotlinx.coroutines.tasks.await
 object ShoppingRepository {
 
     val database = Firebase.database(DATABASE_URL).reference
-    // 1. Add 'suspend' so we can wait for the network
+
+    //function that saves the list to firebase
     suspend fun saveList(
         shoppingList: MutableList<GroceryItems>,
         shoppingListDetails: ListInfo
     ): Result<Unit> = try {
 
-        // 2. Generate the key
+        //generates firebase key
         val newListKey = database.child(LISTS_PATH).push().key
             ?: throw Exception("Could not generate Firebase Key")
 
-        // 3. Create a Map for an "Atomic Update"
-        // This sends BOTH pieces of data in a single network request.
-        // It's all or nothing - no partial saves!
-        val updates = mapOf<String, Any>(
+        //sends the data to firebase
+        val updates = mapOf(
             "$METADATA_PATH/$newListKey" to shoppingListDetails,
             "$LISTS_PATH/$newListKey" to shoppingList
         )
 
-        // 4. Use .updateChildren().await() to wait for completion
+        //waits for request to complete
         database.updateChildren(updates).await()
 
+        //returns success or failure
         Result.success(Unit)
     } catch (e: Exception) {
         Result.failure(e)
     }
 
-
-    fun fetchListMetadata(onResult: (List<ListInfo>) -> Unit) {
-        // Point specifically to the "list_info" child
+    //function that fetches the metadata from firebase
+    fun fetchAllMetadata(onResult: (List<ListInfo>) -> Unit) {
+        // Point to the "METADATA_PATH" node
         database.child(METADATA_PATH).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val allMetadata = mutableListOf<ListInfo>()
 
+                // Iterate through the children the metadata node
                 for (listSnapshot in snapshot.children) {
                     Log.d("FIREBASE_KEYS", "Found keys: ${listSnapshot.value}")
                     val metadata = listSnapshot.getValue(ListInfo::class.java)
                     if (metadata != null) {
-                        // This is great—you're capturing the key for later use (like deletes/edits)
                         metadata.firebaseKey = listSnapshot.key.toString()
                         allMetadata.add(metadata)
                         Log.d("FIREBASE_KEYS", "Found keys: ${listSnapshot.value}")
@@ -65,10 +65,12 @@ object ShoppingRepository {
         })
     }
 
+    //function that fetches the specific list from firebase
+    fun fetchGroceryList(key: String?, onResult: (MutableList<GroceryItems>) -> Unit) {
 
-    fun fetchSpecificList(key: String?, onResult: (MutableList<GroceryItems>) -> Unit) {
-        // 1. Point to the "lists" node, then the specific key
-        val specificRef = database.child(LISTS_PATH).child(key!!)
+        if (key == null) return
+        // Point to the "LISTS_PATH" node, then the specific key
+        val specificRef = database.child(LISTS_PATH).child(key)
 
         specificRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -91,6 +93,30 @@ object ShoppingRepository {
         })
     }
 
+    // function that fetches specific metadata list from firebase
+    fun fetchMetadataList(key: String?, onResult: (ListInfo) -> Unit) {
+        if (key == null) return
+        // Point to the "METADATA_PATH" node, then the specific key
+        val specificRef = database.child(METADATA_PATH).child(key)
+
+        specificRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val item = snapshot.getValue(ListInfo::class.java)
+
+
+                if (item != null) {
+                    onResult(item)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+                Log.e("Firebase", error.message)
+            }
+        })
+    }
+
+    //function that deletes the list from firebase
     fun deleteListFromFirebase(firebaseKey: String) {
         if (firebaseKey.isNotEmpty()) {
             database.child(METADATA_PATH).child(firebaseKey).removeValue()
@@ -104,9 +130,22 @@ object ShoppingRepository {
         }
     }
 
+    // a function that updates specific branch in the firebase
+    suspend fun updateListInFirebase(
+        id: String,
+        items: List<GroceryItems>,
+        meta: ListInfo
+    ): Result<Unit> {
+        return try {
+            // update metadata and grocery list at a specific branch
+            database.child(LISTS_PATH).child(id).setValue(items).await()
+            database.child(METADATA_PATH).child(id).setValue(meta).await()
 
 
-
-
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
 }
