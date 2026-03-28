@@ -1,6 +1,9 @@
 package grocery.shopping.creator
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -12,6 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.R
+import grocery.shopping.data.GroceryItems
+import grocery.shopping.data.ShoppingRepository.fetchGroceryList
+import grocery.shopping.data.ShoppingRepository.fetchMetadataList
 import kotlinx.coroutines.launch
 
 private lateinit var listAdapter: ListCreatorAdapter
@@ -31,13 +37,43 @@ class ListCreator : AppCompatActivity() {
         }
         // Set up the RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
-
+        val listID = intent.getStringExtra("ListID")
+        Log.d("ListCreator", "listId: $listID")
         // Initialize the adapter
-        listAdapter = ListCreatorAdapter()
 
-        // Set the adapter and layout manager for the RecyclerView
+        val listOfProducts: MutableList<GroceryItems> = mutableListOf()
+        val metadataList = grocery.shopping.data.ListInfo()
+        listAdapter = ListCreatorAdapter(listOfProducts, metadataList, listID)
+        Log.d("ListCreatorSent", "listId: $listID")
+
         recyclerView.adapter = listAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        if (listID != null) {
+            fetchMetadataList(listID) { listFromFirebase ->
+                metadataList.listName = listFromFirebase.listName
+                metadataList.createdBy = listFromFirebase.createdBy
+                Log.d("ListCreator", "listFromFirebase: $listFromFirebase")
+                Log.d("ListCreator", "metadataList: $metadataList")
+
+
+
+
+            }
+
+            fetchGroceryList(listID) { listFromFirebase2 ->
+                listOfProducts.addAll(listFromFirebase2)
+                Log.d("ListCreator", "listFromFirebase2: $listFromFirebase2")
+                Log.d("ListCreator", "listOfProducts: $listOfProducts")
+                listAdapter.notifyItemInserted(listOfProducts.size)
+
+            }
+
+        }
+
+
+
+
     }
 
     //implementing menu in the app
@@ -65,21 +101,32 @@ class ListCreator : AppCompatActivity() {
             R.id.saveItems -> {
 
                 lifecycleScope.launch {
-                    when (val result = listAdapter.saveItems(recyclerView)) {
+                    when (listAdapter.saveItems(recyclerView)) {
                         is ListCreatorAdapter.SaveResult.Success -> {
+                            val returnIntent = Intent()
+                            setResult(RESULT_OK, returnIntent)
                             finish() // Only close if it actually reached the cloud
                         }
 
                         is ListCreatorAdapter.SaveResult.EmptyList -> {
-                            Toast.makeText(this@ListCreator, "אי אפשר לשמור רשימה ריקה", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@ListCreator,
+                                "אי אפשר לשמור רשימה ריקה",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                         is ListCreatorAdapter.SaveResult.NetworkError -> {
-                            Toast.makeText(this@ListCreator, "יש תקלה ברשת", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ListCreator, "יש תקלה ברשת", Toast.LENGTH_SHORT)
+                                .show()
                         }
 
                         is ListCreatorAdapter.SaveResult.CanceledByUserInfo -> {
-                            Toast.makeText(this@ListCreator, "שמירת הרשימה בוטלה", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@ListCreator,
+                                "שמירת הרשימה בוטלה",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -89,7 +136,13 @@ class ListCreator : AppCompatActivity() {
             }
             // Handle deleting list item
             R.id.deleteListItem -> {
-                listAdapter.removeItem(recyclerView.getChildAdapterPosition(recyclerView.focusedChild))
+                val position = recyclerView.getChildAdapterPosition(recyclerView.focusedChild)
+                if (position != RecyclerView.NO_POSITION) {
+                    listAdapter.removeItem(position)
+                }
+                else{
+                    Toast.makeText(this, "יש לבחור מוצר למחיקה", Toast.LENGTH_SHORT).show()
+                }
                 true
             }
 
