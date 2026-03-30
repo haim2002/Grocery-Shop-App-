@@ -5,7 +5,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray"
+
+    android:layoutDirection="ltr"
+
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -18,10 +21,16 @@
         android:id="@+id/add_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:layout_gravity="bottom|end"
+
         android:layout_margin="16dp"
         android:contentDescription="@string/add_new_item"
         app:srcCompat="@drawable/add_new_list"
+
+        app:backgroundTint="?attr/colorSecondaryContainer"
+        app:tint="?attr/colorOnSecondaryContainer"
+
         tools:ignore="ClassNameCheck" />
 
 </FrameLayout>
