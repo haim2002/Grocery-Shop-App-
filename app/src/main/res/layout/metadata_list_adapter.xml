@@ -8,10 +8,10 @@
     android:layout_margin="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardBackgroundColor="?attr/colorSurface">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,10 +20,14 @@
 
         <TextView
             android:id="@+id/listName"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" android:layout_marginTop="8dp" android:text="Grocery List"
-            android:textColor="#212121"
-            android:textSize="20sp" android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="8dp"
+            android:text="Grocery List"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:maxLines="2"
             android:ellipsize="end"
             android:gravity="center" />
@@ -40,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="נוצר על ידי: John Doe"
-                android:textColor="#1976D2"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="italic"
                 android:textDirection="rtl" />
@@ -50,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="עודכן על ידי: Jane Doe"
-                android:textColor="#9E9E9E"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="11sp"
                 android:layout_marginTop="2dp"
                 android:textDirection="rtl" />
@@ -60,13 +64,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="March 6, 2026"
-                android:textColor="#757575"
+                android:textColor="?attr/colorOutline"
                 android:textSize="10sp"
                 android:layout_marginTop="1dp" />
 
         </LinearLayout>
 
     </RelativeLayout>
-
 
 </com.google.android.material.card.MaterialCardView>
