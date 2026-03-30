@@ -167,31 +167,25 @@ class ListCreatorAdapter(
             return SaveResult.EmptyList
         }
 
-
-
-
-        // check if user canceled or didn't name the list
-        /*
-        if (listName == UNNAMED_LIST) {
-            return SaveResult.CanceledByUserInfo
-        }
-*/
         // prepare the data
         Log.d("list before sorting", "listOfProducts: $listOfProducts")
         val finalSortedList = sortGroceryInput(listOfProducts)
-        Log.d("list after sorting", "listOfProducts: $finalSortedList")
+        Log.d("list after sorting", "finalSortedList: $finalSortedList")
 
 
-
-        // 5. Attempt to save to Firebase
-
+        //if there is no previous list, create a new one from scratch
         if (listID == null) {
 
             val listName = choosingListNameInDialog(recyclerView.context)
             metadataList = ListInfo(
                 listName = listName,
-                createdBy = getGoogleUserName()
+                createdBy = getGoogleUserName(),
+                updatedBy = getGoogleUserName()
             )
+            if (metadataList.listName == UNNAMED_LIST) {
+                return SaveResult.CanceledByUserInfo
+            }
+            //save to firebase
             val result = ShoppingRepository.saveList(finalSortedList, metadataList)
             return if (result.isSuccess) {
 
@@ -214,9 +208,6 @@ class ListCreatorAdapter(
             }
         }
 
-
-        // 6. Return based on the Repository's Result
-
     }
 
     sealed class SaveResult {
@@ -229,10 +220,11 @@ class ListCreatorAdapter(
     // check if the list is valid
     fun isDataValid(listOfProducts: MutableList<GroceryItems>): Boolean {
 
-        return listOfProducts.isNotEmpty() && listOfProducts.all { it.name.isNotBlank() }
+        return listOfProducts.all { it.name.isNotBlank() }
     }
 
 
+    // function that lets you choose the name of the list
     suspend fun choosingListNameInDialog(context: Context): String =
         suspendCancellableCoroutine { continuation ->
             val inputField = EditText(context).apply {
