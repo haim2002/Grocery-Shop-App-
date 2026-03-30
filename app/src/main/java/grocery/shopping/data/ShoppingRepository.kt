@@ -14,8 +14,7 @@ object ShoppingRepository {
 
     //function that saves the list to firebase
     suspend fun saveList(
-        shoppingList: MutableList<GroceryItems>,
-        shoppingListDetails: ListInfo
+        shoppingList: MutableList<GroceryItems>, shoppingListDetails: ListInfo
     ): Result<Unit> = try {
 
         //generates firebase key
@@ -120,21 +119,17 @@ object ShoppingRepository {
     fun deleteListFromFirebase(firebaseKey: String) {
         if (firebaseKey.isNotEmpty()) {
             database.child(METADATA_PATH).child(firebaseKey).removeValue()
-            database.child(LISTS_PATH).child(firebaseKey).removeValue()
-                .addOnSuccessListener {
-                    Log.d("DELETE_CHECK", "Successfully deleted: $firebaseKey")
-                }
-                .addOnFailureListener { error ->
-                    Log.e("DELETE_CHECK", "Failed to delete: ${error.message}")
-                }
+            database.child(LISTS_PATH).child(firebaseKey).removeValue().addOnSuccessListener {
+                Log.d("DELETE_CHECK", "Successfully deleted: $firebaseKey")
+            }.addOnFailureListener { error ->
+                Log.e("DELETE_CHECK", "Failed to delete: ${error.message}")
+            }
         }
     }
 
     // a function that updates specific branch in the firebase
     suspend fun updateListInFirebase(
-        id: String,
-        items: List<GroceryItems>,
-        meta: ListInfo
+        id: String, items: List<GroceryItems>, meta: ListInfo
     ): Result<Unit> {
         return try {
             // update metadata and grocery list at a specific branch
@@ -145,6 +140,24 @@ object ShoppingRepository {
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    // function that updates the checkbox status in firebase
+    fun updateCheckStatusInFirebase(listId: String, itemID: String, isChecked: Boolean) {
+
+        // 2. Point to the specific item
+        val itemRef = database.child(LISTS_PATH).child(listId).child(itemID)
+
+        // 3. Create a map of the updates
+        val updates = mapOf(
+            "isChecked" to isChecked
+        )
+
+        //Use updateChildren to merge the change
+        itemRef.updateChildren(updates).addOnFailureListener {
+            // Handle any database errors here
+            Log.e("Firebase", "Failed to update checkbox", it)
         }
     }
 
