@@ -21,7 +21,7 @@ lateinit var myAdapter: MetadataListAdapter
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+     //   enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -83,9 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         if (item.itemId == R.id.settings) {
 
-            val intent = Intent(this, ListDisplayer::class.java)
-            startActivity(intent)
-            finish()
+            // TODO:  
             return true
         }
         return super.onOptionsItemSelected(item)
