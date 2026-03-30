@@ -26,7 +26,7 @@ private lateinit var recyclerView: RecyclerView
 class ListCreator : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+      //  enableEdgeToEdge()
         setContentView(R.layout.list_creator)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.list_maker)) { v, insets ->
