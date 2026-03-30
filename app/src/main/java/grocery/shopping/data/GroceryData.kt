@@ -1,16 +1,21 @@
 package grocery.shopping.data
 
+import com.google.firebase.database.PropertyName
+
 
 open class GroceryItems(
     open val type: String = GENERAL_TYPE,
     open var name: String = DEFAULT_PRODUCT_NAME,
-    open var quantity: Int = DEFAULT_ITEM_QUANTITY
-)
-{
+    open var quantity: Int = DEFAULT_ITEM_QUANTITY,
+    @get:PropertyName("isChecked") // Forces Firebase to use "isChecked"
+    @set:PropertyName("isChecked") // Forces Firebase to use "isChecked"
+    open var isChecked: Boolean = false
+) {
 
     override fun toString(): String {
         return "GroceryItem(name='$name', qty=$quantity)"
     }
+    constructor() : this("", "", 0, false)
 }
 
 
@@ -25,6 +30,12 @@ class Fruit(
     quantity: Int
 
 ) : GroceryItems(type = FRUIT_TYPE, name = name, quantity = quantity)
+
+class Drinks(
+    name: String,
+    quantity: Int
+
+) : GroceryItems(type = Drinks_TYPE, name = name, quantity = quantity)
 
 class Dairy(
     name: String,
@@ -44,14 +55,29 @@ class Meat(
 
 ) : GroceryItems(type = MEAT_TYPE, name = name, quantity = quantity)
 
+class Pantry(
+    name: String,
+    quantity: Int
+
+) : GroceryItems(type = Pantry_TYPE, name = name, quantity = quantity)
+
+class Cleaning(
+    name: String,
+    quantity: Int
+
+) : GroceryItems(type = Cleaning_TYPE, name = name, quantity = quantity)
+
+
 fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<GroceryItems> {
 
     val listOfVegetables: MutableList<Vegetables> = mutableListOf()
     val listOfFruit: MutableList<Fruit> = mutableListOf()
+    val listOfDrinks: MutableList<Drinks> = mutableListOf()
     val listOfDairy: MutableList<Dairy> = mutableListOf()
     val listOfBakery: MutableList<Bakery> = mutableListOf()
     val listOfMeat: MutableList<Meat> = mutableListOf()
-
+    val listOfPantry: MutableList<Pantry> = mutableListOf()
+    val listOfCleaning: MutableList<Cleaning> = mutableListOf()
     val listOfGeneralItems: MutableList<GroceryItems> = mutableListOf()
     val finalSortedList: MutableList<GroceryItems> = mutableListOf()
 
@@ -70,6 +96,10 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<Gro
                     listOfVegetables.add(Vegetables(name = productName, quantity = itemQuantity))
                 }
 
+                Drinks_TYPE -> {
+                    listOfDrinks.add(Drinks(name = productName, quantity = itemQuantity))
+                }
+
                 DAIRY_TYPE -> {
                     listOfDairy.add(Dairy(name = productName, quantity = itemQuantity))
                 }
@@ -80,6 +110,14 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<Gro
 
                 MEAT_TYPE -> {
                     listOfMeat.add(Meat(name = productName, quantity = itemQuantity))
+                }
+
+                Pantry_TYPE -> {
+                    listOfPantry.add(Pantry(name = productName, quantity = itemQuantity))
+                }
+
+                Cleaning_TYPE -> {
+                    listOfCleaning.add(Cleaning(name = productName, quantity = itemQuantity))
                 }
 
                 else -> {
@@ -96,115 +134,223 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<Gro
 
     finalSortedList.addAll(listOfFruit)
     finalSortedList.addAll(listOfVegetables)
+    finalSortedList.addAll(listOfDrinks)
     finalSortedList.addAll(listOfDairy)
     finalSortedList.addAll(listOfBakery)
     finalSortedList.addAll(listOfMeat)
+    finalSortedList.addAll(listOfPantry)
+    finalSortedList.addAll(listOfCleaning)
     finalSortedList.addAll(listOfGeneralItems)
-    return finalSortedList.distinctBy {it.name} as MutableList<GroceryItems>
+    return finalSortedList.distinctBy { it.name } as MutableList<GroceryItems>
 }
-
-
 
 
 val typeDetermine = mapOf(
 
     // --- Fruits (פירות) ---
-    "תפוח" to "Fruit",
-    "בננה" to "Fruit",
-    "תפוז" to "Fruit",
-    "ענבים" to "Fruit",
-    "אפרסק" to "Fruit",
-    "תות" to "Fruit",
-    "קלמנטינה" to "Fruit",
-    "מלון" to "Fruit",
+    // --- Fruits & Vegetables (פירות וירקות) ---
     "אבטיח" to "Fruit",
-    "אגס" to "Fruit",
-    "אפרסמון" to "Fruit",
-    "דובדבן" to "Fruit",
-    "לימון" to "Fruit",
-    "מנגו" to "Fruit",
-    "נקטרינה" to "Fruit",
-    "פומלה" to "Fruit",
-    "קיווי" to "Fruit",
-    "שזיף" to "Fruit",
-
-    // --- Vegetables (ירקות) ---
-    "עגבניה" to "Vegetables",
     "אבוקדו" to "Vegetables",
-    "מלפפון" to "Vegetables",
-    "פלפל" to "Vegetables",
-    "בצל" to "Vegetables",
-    "תפוח אדמה" to "Vegetables",
-    "גזר" to "Vegetables",
-    "חסה" to "Vegetables",
-    "קישואים" to "Vegetables",
-    "חציל" to "Vegetables",
-    "שום" to "Vegetables",
-    "ברוקולי" to "Vegetables",
-    "כרובית" to "Vegetables",
-    "כרוב" to "Vegetables",
-    "תירס" to "Vegetables",
+    "אגס" to "Fruit",
+    "אורגנו" to "Vegetables",
+    "אפרסמון" to "Fruit",
+    "אפרסק" to "Fruit",
     "בטטה" to "Vegetables",
-    "סלק" to "Vegetables",
-    "צנון" to "Vegetables",
-    "פטריות" to "Vegetables",
-    "דלעת" to "Vegetables",
+    "ביבי תרד" to "Vegetables",
+    "בננה" to "Fruit",
+    "בצל" to "Vegetables",
+    "בצל ירוק" to "Vegetables",
+    "בצל סגול" to "Vegetables",
+    "ברוקולי" to "Vegetables",
+    "גזר" to "Vegetables",
+    "דובדבן" to "Fruit",
     "דלורית" to "Vegetables",
-    "פטרוזיליה" to "Vegetables",
+    "דלעת" to "Vegetables",
+    "חסה" to "Vegetables",
+    "חציל" to "Vegetables",
     "כוסברה" to "Vegetables",
+    "כרוב" to "Vegetables",
+    "כרובית" to "Vegetables",
+    "לימון" to "Fruit",
+    "מלון" to "Fruit",
+    "מלפפון" to "Vegetables",
+    "מנגו" to "Fruit",
+    "נענע" to "Vegetables",
+    "נקטרינה" to "Fruit",
+    "סלק" to "Vegetables",
+    "עגבניה" to "Vegetables",
+    "עגבניות שרי" to "Vegetables",
+    "ענבים" to "Fruit",
+    "פטרוזיליה" to "Vegetables",
+    "פטריות" to "Vegetables",
+    "פיטרוזיליה" to "Vegetables",
+    "פלפל" to "Vegetables",
+    "פלפל חריף" to "Vegetables",
+    "פומלה" to "Fruit",
+    "צנון" to "Vegetables",
+    "צנונית" to "Vegetables",
+    "קולורבי" to "Vegetables",
+    "קישואים" to "Vegetables",
+    "קלמנטינה" to "Fruit",
+    "קיווי" to "Fruit",
+    "שום" to "Vegetables",
+    "שמיר" to "Vegetables",
+    "שעועית ירוקה" to "Vegetables",
+    "שזיף" to "Fruit",
+    "תות" to "Fruit",
+    "תירס" to "Vegetables",
+    "תפוז" to "Fruit",
+    "תפוח" to "Fruit",
+    "תפוח אדמה" to "Vegetables",
 
-    // --- Dairy (מוצרי חלב וגבינות) ---
-    "חלב" to "Dairy",
-    "חלב לקפה" to "Dairy",
+    // --- Drinks (שתייה) ---
+    "אייס קפה" to "Drinks",
+    "אשכולית" to "Drinks",
+    "בירה" to "Drinks",
+    "בירה לבנה" to "Drinks",
+    "בירה שחורה" to "Drinks",
+    "גזוז" to "Drinks",
+    "דיאט קולה" to "Drinks",
+    "הייניקן" to "Drinks",
+    "ויסקי" to "Drinks",
+    "וודקה" to "Drinks",
+    "יין" to "Drinks",
+    "יין אדום" to "Drinks",
+    "יין לבן" to "Drinks",
+    "יין קידוש" to "Drinks",
+    "מי טוניק" to "Drinks",
+    "מיץ" to "Drinks",
+    "מיץ אפרסק" to "Drinks",
+    "מיץ אשכוליות" to "Drinks",
+    "מיץ עגבניות" to "Drinks",
+    "מיץ לימון" to "Drinks",
+    "מיץ מנגו" to "Drinks",
+    "מיץ ענבים" to "Drinks",
+    "מיץ פטל" to "Drinks",
+    "מיץ רימונים" to "Drinks",
+    "מיץ תפוזים" to "Drinks",
+    "מיץ תפוחים" to "Drinks",
+    "מים" to "Drinks",
+    "מים בטעמים" to "Drinks",
+    "מים מינרליים" to "Drinks",
+    "נביעות" to "Drinks",
+    "נסקפה" to "Drinks",
+    "סודה" to "Drinks",
+    "ספרייט" to "Drinks",
+    "ספרייט זירו" to "Drinks",
+    "ענבי טלי" to "Drinks",
+    "פאנטה" to "Drinks",
+    "פיוזטי" to "Drinks",
+    "פיוז טי" to "Drinks",
+    "פריגת" to "Drinks",
+    "קוקה קולה" to "Drinks",
+    "קולה" to "Drinks",
+    "קולה זירו" to "Drinks",
+    "קפה" to "Drinks",
+    "קפה נמס" to "Drinks",
+    "קפסולות קפה" to "Drinks",
+    "שוופס" to "Drinks",
+    "תה" to "Drinks",
+    "תה קר" to "Drinks",
+    "תירוש" to "Drinks",
+
+    // --- Dairy & Eggs (חלב, ביצים וגבינות) ---
+    "ביצים" to "Dairy",
     "גבינה" to "Dairy",
-    "גבינה צהובה" to "Dairy",
-    "גבינה לבנה" to "Dairy",
     "גבינה בולגרית" to "Dairy",
+    "גבינה לבנה" to "Dairy",
     "גבינה מלוחה" to "Dairy",
+    "גבינה עזים" to "Dairy",
+    "גבינה צהובה" to "Dairy",
     "גבינה צפתית" to "Dairy",
     "גבינה שמנת" to "Dairy",
-    "גבינה עזים" to "Dairy",
-    "גבינה כחולה" to "Dairy",
-    "קוטג'" to "Dairy",
-    "יוגורט" to "Dairy",
+    "חלב" to "Dairy",
+    "חלב לקפה" to "Dairy",
+    "חלב סויה" to "Dairy",
+    "חלב שיבולת שועל" to "Dairy",
     "חמאה" to "Dairy",
-    "שמנת" to "Dairy",
+    "יוגורט" to "Dairy",
+    "לאבנה" to "Dairy",
+    "מילקי" to "Dairy",
+    "מעדן" to "Dairy",
+    "מרגרינה" to "Dairy",
+    "פרמזן" to "Dairy",
+    "קוטג'" to "Dairy",
     "שמנת חמוצה" to "Dairy",
     "שמנת מתוקה" to "Dairy",
-    "לאבנה" to "Dairy",
-    "יוגורט" to "Dairy",
-    "פרמזן" to "Dairy",
-
-    // --- Bakery (מאפים) ---
-    "לחם" to "Bakery",
-    "פיתה" to "Bakery",
-    "לחמניה" to "Bakery",
-    "חלה" to "Bakery",
-    "בורקס" to "Bakery",
-    "עוגה" to "Bakery",
-    "עוגיה" to "Bakery",
 
     // --- Meat & Fish (בשר ודגים) ---
-    "חזה עוף" to "Meat",
-    "כרעיים" to "Meat",
-    "שוקיים" to "Meat",
-    "כנפיים" to "Meat",
-    "פרגיות" to "Meat",
-    "עוף שלם" to "Meat",
-    "שניצל" to "Meat",
-    "בשר טחון" to "Meat",
-    "סטייק" to "Meat",
-    "צלי כתף" to "Meat",
-    "סינטה" to "Meat",
+    "אמנון" to "Meat",
     "אנטריקוט" to "Meat",
+    "בשר טחון" to "Meat",
+    "דג" to "Meat",
+    "חזה עוף" to "Meat",
+    "טונה" to "Meat",
+    "כנפיים" to "Meat",
+    "כרעיים" to "Meat",
+    "נסיכת הנילוס" to "Meat",
+    "נקניק" to "Meat",
+    "נקניקיות" to "Meat",
+    "סלמון" to "Meat",
+    "סטייק" to "Meat",
+    "עוף שלם" to "Meat",
+    "פסטרמה" to "Meat",
+    "פרגיות" to "Meat",
+    "צלי כתף" to "Meat",
     "צלעות" to "Meat",
     "קבב" to "Meat",
-    "נקניקיות" to "Meat",
-    "נקניק" to "Meat",
-    "פסטרמה" to "Meat",
-    "דג" to "Meat",
-    "אמנון" to "Meat",
-    "סלמון" to "Meat",
-    "נסיכת הנילוס" to "Meat",
-    "טונה" to "Meat"
+    "שוקיים" to "Meat",
+    "שניצל" to "Meat",
+
+    // --- Bakery (מאפים ולחם) ---
+    "בורקס" to "Bakery",
+    "חלה" to "Bakery",
+    "לחם" to "Bakery",
+    "לחם פרוס" to "Bakery",
+    "לחמניה" to "Bakery",
+    "מלאווח" to "Frozen",
+    "עוגה" to "Bakery",
+    "עוגיה" to "Bakery",
+    "פיתה" to "Bakery",
+    "קרואסון" to "Bakery",
+
+    // --- Pantry & Cooking (מזווה ובישול) ---
+    "אורז" to "Pantry",
+    "אבקת אפייה" to "Pantry",
+    "דבש" to "Pantry",
+    "זיתים" to "Pantry",
+    "חומוס" to "Pantry",
+    "טחינה" to "Pantry",
+    "יין" to "Pantry",
+    "מיונז" to "Pantry",
+    "מלח" to "Pantry",
+    "מרק עוף" to "Pantry",
+    "סוכר" to "Pantry",
+    "סילאן" to "Pantry",
+    "עדשים" to "Pantry",
+    "עלי דפנה" to "Pantry",
+    "פירורי לחם" to "Pantry",
+    "פסטה" to "Pantry",
+    "פתיתים" to "Pantry",
+    "צנוברים" to "Pantry",
+    "קמח" to "Pantry",
+    "קפה" to "Pantry",
+    "קטשופ" to "Pantry",
+    "קינואה" to "Pantry",
+    "ריבה" to "Pantry",
+    "שמן" to "Pantry",
+    "שמן זית" to "Pantry",
+    "שימורים" to "Pantry",
+    "תה" to "Pantry",
+
+    // --- Cleaning & Household (ניקיון ובית) ---
+    "אבקת כביסה" to "Cleaning",
+    "מרכך" to "Cleaning",
+    "נייר טואלט" to "Cleaning",
+    "נייר סופג" to "Cleaning",
+    "ניילון נצמד" to "Cleaning",
+    "סבון כלים" to "Cleaning",
+    "סבון גוף" to "Cleaning",
+    "שמפו" to "Cleaning",
+    "שקיות זבל" to "Cleaning"
 )
