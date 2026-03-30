@@ -9,6 +9,9 @@ const val FRUIT_TYPE = "Fruit"
 const val DAIRY_TYPE = "Dairy"
 const val BAKERY_TYPE = "Bakery"
 const val MEAT_TYPE = "Meat"
+const val Drinks_TYPE = "Drinks"
+const val Pantry_TYPE = "Pantry"
+const val Cleaning_TYPE = "Cleaning"
 const val GENERAL_TYPE = "GENERAL"
 const val DEFAULT_PRODUCT_NAME = ""
 const val UNNAMED_LIST = "UnNamedList"
@@ -17,6 +20,11 @@ const val DATABASE_URL =
 
 const val METADATA_PATH = "lists_metadata"
 const val LISTS_PATH = "grocery_lists"
+
+const val DEFAULT_USER_NAME = "Unknown"
+
+
+
 
 
 
