@@ -4,9 +4,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.data.ListInfo
 import grocery.shopping.data.ShoppingRepository.deleteListFromFirebase
@@ -18,8 +21,13 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
     RecyclerView.Adapter<MetadataListAdapter.ItemViewHolder>() {
 
 
+    var actionMode: androidx.appcompat.view.ActionMode? = null
+    var selectedPosition: Int = RecyclerView.NO_POSITION
+
     class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
+
+        //set up the variables for the adapter
         val listName: TextView = view.findViewById(R.id.listName)
         var createdBy: TextView = view.findViewById(R.id.creatorName)
         val listDate: TextView = view.findViewById(R.id.listDate)
@@ -34,20 +42,19 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
             .inflate(R.layout.metadata_list_adapter, parent, false)
         return ItemViewHolder(view)
 
-
     }
-
-    val selectedPositions = mutableSetOf<Int>()
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val context = holder.itemView.context
         val currentMetadata = lists[position]
         Log.d("MetadataListAdapter", "currentMetadata: $currentMetadata")
 
+        // Set the text for the TextView
         holder.listName.text = currentMetadata.listName
         holder.createdBy.text = context.getString(R.string.created_by, currentMetadata.createdBy)
         holder.updatedBy.text = context.getString(R.string.updated_by, currentMetadata.updatedBy)
-        holder.listDate.text = context.getString(R.string.list_date, setDateFormat(currentMetadata.timeCreated))
+        holder.listDate.text =
+            context.getString(R.string.list_date, setDateFormat(currentMetadata.timeCreated))
 
         Log.d("MetadataListAdapter", "onBindViewHolder: ${currentMetadata.listName}")
         Log.d("MetadataListAdapter", "onBindViewHolder: ${currentMetadata.createdBy}")
@@ -55,34 +62,94 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
         Log.d("MetadataListAdapter", "onBindViewHolder: ${currentMetadata.firebaseKey}")
 
 
-
-        holder.itemView.setBackgroundColor(
-            if (selectedPositions.contains(position)) Color.GRAY else Color.LTGRAY
-        )
-
+        setSelectedPositionColor(position, holder)
 
         // Handle the "Button" click
         holder.itemView.setOnClickListener {
-            val context = holder.itemView.context
+
             Log.d("MetadataListAdapter", "listName: ${holder.listName.text}")
             Log.d("MetadataListAdapter", "listCreator: ${holder.createdBy.text}")
             Log.d("MetadataListAdapter", "listDate: ${holder.listDate.text}")
-            val intent = Intent(context, ListDisplayer::class.java)
-            intent.putExtra("LIST_ID", currentMetadata.firebaseKey)
-            context.startActivity(intent)
+
+            // Check if an item is selected
+            val currentPos = holder.bindingAdapterPosition
+            if (currentPos == RecyclerView.NO_POSITION) return@setOnClickListener
+            if (actionMode == null) {
+                // If no item is selected, start a new activity for list content
+                val intent = Intent(context, ListDisplayer::class.java)
+                intent.putExtra("LIST_ID", currentMetadata.firebaseKey)
+                intent.putExtra("LIST_NAME", currentMetadata.listName)
+                context.startActivity(intent)
+
+            }
+            //
+            changeSelectedItem(currentPos, holder)
 
         }
+       //
+        val actionModeCallback = object : androidx.appcompat.view.ActionMode.Callback {
 
-        holder.itemView.setOnLongClickListener {
-            if (selectedPositions.contains(position)) {
-                selectedPositions.remove(position)
-            } else {
-                selectedPositions.add(position)
-                deleteListFromFirebase(currentMetadata.firebaseKey)
+
+            override fun onCreateActionMode(
+                mode: androidx.appcompat.view.ActionMode,
+                menu: Menu
+            ): Boolean {
+                // INFLATE your XML here - this puts the buttons on top
+                mode.menuInflater.inflate(R.menu.list_delete_menu, menu)
+                mode.title = "נבחרה רשימה"
+                return true
             }
-            notifyItemChanged(position) // Redraw just this row
+
+            override fun onActionItemClicked(
+                mode: androidx.appcompat.view.ActionMode,
+                item: MenuItem
+            ): Boolean {
+                return when (item.itemId) {
+                    R.id.action_delete -> {
+                        deleteListFromFirebase(lists[selectedPosition].firebaseKey)
+                        mode.finish() // Closes the top bar
+                        true
+                    }
+
+                    R.id.action_edit -> {
+                         // Handle edit action
+                        mode.finish()
+                        true
+                        //TODO: implement edit action
+                    }
+
+                    else -> false
+                }
+            }
+
+            override fun onPrepareActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu) =
+                false
+
+            override fun onDestroyActionMode(mode: androidx.appcompat.view.ActionMode) {
+                val previousSelection = selectedPosition
+                selectedPosition = RecyclerView.NO_POSITION // Reset the selection
+                actionMode = null
+
+                // Refresh the item so the background turns transparent again
+                notifyItemChanged(previousSelection)
+            }
+        }
+
+// 3. Trigger it inside your Adapter's onLongClickListener
+        holder.itemView.setOnLongClickListener { view ->
+
+            val currentPos = holder.bindingAdapterPosition
+            if (currentPos == RecyclerView.NO_POSITION) return@setOnLongClickListener false
+
+            if (actionMode == null) {
+                selectedPosition = currentPos // Save the clicked position
+                val activity = view.context as AppCompatActivity
+                actionMode = activity.startSupportActionMode(actionModeCallback)
+                notifyItemChanged(currentPos) // Tell the list to redraw this item
+            }
             true
         }
+
 
     }
 
@@ -92,11 +159,55 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
         this.lists = newList
         notifyDataSetChanged()
     }
-    fun setDateFormat( timeCreated: Long) : String{
 
-      return  SimpleDateFormat(
-            "dd/MM/yy HH:mm", // הוספנו HH:mm לשעה ודקות
+    fun setDateFormat(timeCreated: Long): String {
+
+        return SimpleDateFormat(
+            "dd/MM/yy HH:mm",
             Locale.getDefault()
         ).format(Date(timeCreated))
     }
+
+    fun setSelectedPositionColor(
+        currentPosition: Int,
+        holder: ItemViewHolder
+    ) {
+
+        if (currentPosition == selectedPosition) {
+            setSelectedColor(holder)
+        } else {
+            holder.itemView.setBackgroundColor(Color.LTGRAY)
+            setDefaultColor(holder)
+        }
+    }
+
+    fun changeSelectedItem(currentPos: Int, holder: ItemViewHolder) {
+
+        if (actionMode != null) {
+            if (currentPos == selectedPosition) {
+                // User clicked the selected item again -> CANCEL
+                setDefaultColor(holder)
+                actionMode?.finish()
+            } else {
+                // User clicked a different item -> SWAP
+                val previousPos = selectedPosition
+                this.selectedPosition = currentPos
+
+                notifyItemChanged(previousPos)
+                notifyItemChanged(selectedPosition)
+
+                // Only update the title if the menu is staying open
+                actionMode?.title = "נבחרה רשימה"
+            }
+        }
+    }
+
+    fun setDefaultColor(holder: ItemViewHolder) {
+        holder.itemView.setBackgroundColor(Color.LTGRAY)
+    }
+
+    fun setSelectedColor(holder: ItemViewHolder) {
+        holder.itemView.setBackgroundColor(Color.DKGRAY)
+    }
+
 }
