@@ -22,5 +22,11 @@
     <string name="created_by">נוצר על ידי: %s</string>
     <string name="updated_by">עודכן על ידי: %s</string>
     <string name="list_date">תאריך: %s</string>
+    <string name="x_string">x</string>
+    <string name="grocery_list_sample_string">Grocery List</string>
+    <string name="john_doe_sample_string">נוצר על ידי: John Doe</string>
+    <string name="march_6_2026_sample_string">March 6, 2026</string>
+    <string name="edit_btn_title">Edit</string>
+    <string name="delete_btn_title">Delete</string>
 
 </resources>
