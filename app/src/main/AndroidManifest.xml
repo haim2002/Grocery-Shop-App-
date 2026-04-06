@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Grocery_Shopping">
 
         <activity
-            android:name=".ListDisplayer"
+            android:name=".displayer.ListDisplayer"
             android:exported="false" />
 
         <activity
