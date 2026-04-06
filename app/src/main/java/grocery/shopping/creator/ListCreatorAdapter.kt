@@ -25,6 +25,7 @@ import grocery.shopping.data.MAX_ITEM_QUANTITY
 import grocery.shopping.data.MIN_ITEM_QUANTITY
 import grocery.shopping.data.ShoppingRepository
 import grocery.shopping.data.UNNAMED_LIST
+import grocery.shopping.data.choosingListNameInDialog
 import grocery.shopping.data.getGoogleUserName
 import grocery.shopping.data.sortGroceryInput
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -224,38 +225,4 @@ class ListCreatorAdapter(
     }
 
 
-    // function that lets you choose the name of the list
-    suspend fun choosingListNameInDialog(context: Context): String =
-        suspendCancellableCoroutine { continuation ->
-            val inputField = EditText(context).apply {
-                hint = "הרשימה שלי"
-            }
-
-            val dialog = AlertDialog.Builder(context)
-
-                .setTitle("שם הרשימה")
-                .setView(inputField)
-                .setPositiveButton("שמור") { _, _ ->
-                    val name = inputField.text.toString()
-                    // Resume the coroutine with the name
-                    continuation.resume(name.ifBlank { DEFAULT_LIST_NAME })
-                }
-                .setNegativeButton("ביטול") { dialog, _ ->
-                    // Resume with null if canceled
-                    continuation.resume(UNNAMED_LIST)
-                    dialog.dismiss()
-                }
-                .setOnCancelListener {
-                    // Important: handle if user clicks outside the dialog
-                    continuation.resume(UNNAMED_LIST)
-                }
-                .create()
-
-            // If the coroutine is canceled externally, dismiss the dialog
-            continuation.invokeOnCancellation {
-                dialog.dismiss()
-            }
-
-            dialog.show()
-        }
 }
