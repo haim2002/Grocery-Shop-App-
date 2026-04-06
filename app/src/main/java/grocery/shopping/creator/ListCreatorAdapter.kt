@@ -1,6 +1,5 @@
 package grocery.shopping.creator
 
-import android.app.AlertDialog
 import android.content.Context
 import android.text.TextWatcher
 import android.util.Log
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.R
 import grocery.shopping.data.ListInfo
 import grocery.shopping.data.DEFAULT_ITEM_QUANTITY
-import grocery.shopping.data.DEFAULT_LIST_NAME
 import grocery.shopping.data.DEFAULT_PRODUCT_NAME
 import grocery.shopping.data.GroceryItems
 import grocery.shopping.data.MAX_ITEM_QUANTITY
@@ -28,8 +26,6 @@ import grocery.shopping.data.UNNAMED_LIST
 import grocery.shopping.data.choosingListNameInDialog
 import grocery.shopping.data.getGoogleUserName
 import grocery.shopping.data.sortGroceryInput
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 class ListCreatorAdapter(
     var listOfProducts: MutableList<GroceryItems>,
