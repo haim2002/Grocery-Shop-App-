@@ -1,18 +1,19 @@
-package grocery.shopping
+package grocery.shopping.displayer
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import grocery.shopping.R
 import grocery.shopping.data.GroceryItems
-import grocery.shopping.data.ShoppingRepository.updateCheckStatusInFirebase
+import grocery.shopping.data.ShoppingRepository
 
-
-class ListDisplayAdapter(var listOfProducts: MutableList<GroceryItems>,var listId: String) : RecyclerView.Adapter<ListDisplayAdapter.ItemViewHolder>() {
+class ListDisplayAdapter(var listOfProducts: MutableList<GroceryItems>, var listId: String) : RecyclerView.Adapter<ListDisplayAdapter.ItemViewHolder>() {
 
 
 /*
@@ -51,12 +52,16 @@ class ListDisplayAdapter(var listOfProducts: MutableList<GroceryItems>,var listI
         holder.checkbox.isChecked = currentItem.isChecked
 
 
-        toggleCrossedLine(holder.productName, holder.productQuantity, currentItem.isChecked)
+      toggleCrossedLine(holder.productName, holder.productQuantity, holder.checkbox.isChecked)
 
-        holder.checkbox.setOnCheckedChangeListener {_, isChecked ->
+        holder.checkbox.setOnClickListener { _->
             // Toggle the boolean
-            currentItem.isChecked = isChecked
-            updateCheckStatusInFirebase(listId, position.toString(), isChecked)
+            currentItem.isChecked = !currentItem.isChecked
+            Log.d("ListDisplayerDebug", "isChecked: ${ currentItem.isChecked}")
+            Log.d("ListDisplayerDebug", "position: $position")
+
+
+            ShoppingRepository.updateCheckStatusInFirebase(listId, position.toString(), currentItem.isChecked)
 
             // Update the UI immediately
             toggleCrossedLine(holder.productName,holder.productQuantity, currentItem.isChecked)
@@ -70,8 +75,8 @@ class ListDisplayAdapter(var listOfProducts: MutableList<GroceryItems>,var listI
 
         return listOfProducts.size
     }
-    private fun toggleCrossedLine(productName: TextView, productQuantity: TextView, isChecked: Boolean) {
-        if (isChecked) {
+    private fun toggleCrossedLine(productName: TextView, productQuantity: TextView, checkbox: Boolean) {
+        if (checkbox) {
             // Adds the strike-through flag
             productName.paintFlags = productName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             productQuantity.paintFlags = productQuantity.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
