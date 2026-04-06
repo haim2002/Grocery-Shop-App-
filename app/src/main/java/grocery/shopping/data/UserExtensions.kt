@@ -9,9 +9,12 @@ fun getGoogleUserName(): String {
 
     return displayName ?: "unknown user"
 }
+/*
 fun getGoogleUserID(): String? {
 
     val auth = FirebaseAuth.getInstance()
     val currentUid = auth.currentUser?.uid
     return currentUid
 }
+
+ */
