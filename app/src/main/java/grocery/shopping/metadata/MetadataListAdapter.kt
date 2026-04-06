@@ -1,6 +1,7 @@
 package grocery.shopping.metadata
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.util.Log
@@ -12,11 +13,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import grocery.shopping.R
 import grocery.shopping.data.ListInfo
 import grocery.shopping.data.ShoppingRepository
+import grocery.shopping.data.choosingListNameInDialog
 import grocery.shopping.displayer.ListDisplayer
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -90,7 +94,7 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
             changeSelectedItem(currentPos, holder)
 
         }
-       //
+        //
         val actionModeCallback = object : ActionMode.Callback {
 
 
@@ -106,7 +110,7 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
 
             override fun onActionItemClicked(
                 mode: ActionMode,
-                item: MenuItem
+                item: MenuItem,
             ): Boolean {
                 return when (item.itemId) {
                     R.id.action_delete -> {
@@ -116,10 +120,15 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
                     }
 
                     R.id.action_edit -> {
-                         // Handle edit action
-                        mode.finish()
+                        // Standard launch for update
+                        val context = holder.itemView.context as? AppCompatActivity
+                        context?.lifecycleScope?.launch{
+                          //  val listName = choosingListNameInDialog(context)
+                            updateListName(lists[selectedPosition].firebaseKey, context)
+                            mode.finish()
+
+                        }
                         true
-                        //TODO: implement edit action
                     }
 
                     else -> false
@@ -215,4 +224,10 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
         holder.itemView.setBackgroundColor(Color.DKGRAY)
     }
 
+    suspend fun updateListName(listID: String, context: Context) {
+
+        val listName = choosingListNameInDialog(context)
+        ShoppingRepository.updateListNameInFirebase(listID, listName)
+        notifyItemChanged(selectedPosition)
+    }
 }
