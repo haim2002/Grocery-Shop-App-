@@ -3,6 +3,7 @@ package grocery.shopping.data
 import com.google.firebase.database.PropertyName
 
 
+@Suppress("unused")
 open class GroceryItems(
     open val type: String = GENERAL_TYPE,
     open var name: String = DEFAULT_PRODUCT_NAME,
@@ -15,6 +16,7 @@ open class GroceryItems(
     override fun toString(): String {
         return "GroceryItem(name='$name', qty=$quantity)"
     }
+
     constructor() : this("", "", 0, false)
 }
 
@@ -83,17 +85,23 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<Gro
 
     for (product in listOfProducts) {
         val itemQuantity = product.quantity
-        val productName = product.name.trim()
-        val detectedType = typeDetermine[productName]
+        val productName = product.name.trim().replace("'", "")
+        val detectedType = typeDetermine.entries.find { (key, _) ->
+            productName.startsWith(key) || ignoreMisspells(
+                productName,
+                key
+            ) && productName.startsWith(key)
+        }?.value
 
-        if (productName.isNotBlank()) {
+        if (productName.isNotBlank() && productName != "תפוח אדמה") {
             when (detectedType) {
-                FRUIT_TYPE -> {
-                    listOfFruit.add(Fruit(name = productName, quantity = itemQuantity))
-                }
 
                 VEGETABLES_TYPE -> {
                     listOfVegetables.add(Vegetables(name = productName, quantity = itemQuantity))
+                }
+
+                FRUIT_TYPE -> {
+                    listOfFruit.add(Fruit(name = productName, quantity = itemQuantity))
                 }
 
                 Drinks_TYPE -> {
@@ -129,25 +137,44 @@ fun sortGroceryInput(listOfProducts: MutableList<GroceryItems>): MutableList<Gro
                     )
                 }
             }
+
+        }
+        if (productName == "תפוח אדמה") {
+
+            listOfVegetables.add(Vegetables(name = productName, quantity = itemQuantity))
         }
     }
 
-    finalSortedList.addAll(listOfFruit)
-    finalSortedList.addAll(listOfVegetables)
-    finalSortedList.addAll(listOfDrinks)
-    finalSortedList.addAll(listOfDairy)
-    finalSortedList.addAll(listOfBakery)
-    finalSortedList.addAll(listOfMeat)
-    finalSortedList.addAll(listOfPantry)
-    finalSortedList.addAll(listOfCleaning)
-    finalSortedList.addAll(listOfGeneralItems)
+    finalSortedList.addAll(listOfVegetables.sortedBy { it.name })
+    finalSortedList.addAll(listOfFruit.sortedBy { it.name })
+    finalSortedList.addAll(listOfDrinks.sortedBy { it.name })
+    finalSortedList.addAll(listOfDairy.sortedBy { it.name })
+    finalSortedList.addAll(listOfBakery.sortedBy { it.name })
+    finalSortedList.addAll(listOfMeat.sortedBy { it.name })
+    finalSortedList.addAll(listOfPantry.sortedBy { it.name })
+    finalSortedList.addAll(listOfCleaning.sortedBy { it.name })
+    finalSortedList.addAll(listOfGeneralItems.sortedBy { it.name })
     return finalSortedList.distinctBy { it.name } as MutableList<GroceryItems>
 }
 
+fun ignoreMisspells(input: String, key: String): Boolean {
+    if (key.length > input.length) return false
+
+    val confusingPairs = mapOf(
+        'ט' to 'ת', 'ת' to 'ט',
+        'א' to 'ע', 'ע' to 'א',
+        'כ' to 'ק', 'ק' to 'כ',
+        // "תפוח אדמה" to ",תפוא"
+
+    )
+
+    return input.take(key.length).zip(key).all { (charInput, charKey) ->
+        charInput == charKey || confusingPairs[charInput] == charKey
+    }
+}
 
 val typeDetermine = mapOf(
 
-    // --- Fruits (פירות) ---
     // --- Fruits & Vegetables (פירות וירקות) ---
     "אבטיח" to "Fruit",
     "אבוקדו" to "Vegetables",
@@ -162,6 +189,7 @@ val typeDetermine = mapOf(
     "בצל ירוק" to "Vegetables",
     "בצל סגול" to "Vegetables",
     "ברוקולי" to "Vegetables",
+    "גינגר" to "Vegetables",
     "גזר" to "Vegetables",
     "דובדבן" to "Fruit",
     "דלורית" to "Vegetables",
@@ -179,7 +207,8 @@ val typeDetermine = mapOf(
     "נקטרינה" to "Fruit",
     "סלק" to "Vegetables",
     "עגבניה" to "Vegetables",
-    "עגבניות שרי" to "Vegetables",
+    "שרי" to "Vegetables",
+    "עגבניות" to "Vegetables",
     "ענבים" to "Fruit",
     "פטרוזיליה" to "Vegetables",
     "פטריות" to "Vegetables",
@@ -201,6 +230,7 @@ val typeDetermine = mapOf(
     "תירס" to "Vegetables",
     "תפוז" to "Fruit",
     "תפוח" to "Fruit",
+    "תפוא" to "Vegetables",
     "תפוח אדמה" to "Vegetables",
 
     // --- Drinks (שתייה) ---
@@ -220,20 +250,7 @@ val typeDetermine = mapOf(
     "יין קידוש" to "Drinks",
     "מי טוניק" to "Drinks",
     "מיץ" to "Drinks",
-    "מיץ אפרסק" to "Drinks",
-    "מיץ אשכוליות" to "Drinks",
-    "מיץ עגבניות" to "Drinks",
-    "מיץ לימון" to "Drinks",
-    "מיץ מנגו" to "Drinks",
-    "מיץ ענבים" to "Drinks",
-    "מיץ פטל" to "Drinks",
-    "מיץ רימונים" to "Drinks",
-    "מיץ תפוזים" to "Drinks",
-    "מיץ תפוחים" to "Drinks",
     "מים" to "Drinks",
-    "מים בטעמים" to "Drinks",
-    "מים מינרליים" to "Drinks",
-    "נביעות" to "Drinks",
     "נסקפה" to "Drinks",
     "סודה" to "Drinks",
     "ספרייט" to "Drinks",
@@ -247,45 +264,33 @@ val typeDetermine = mapOf(
     "קולה" to "Drinks",
     "קולה זירו" to "Drinks",
     "קפה" to "Drinks",
-    "קפה נמס" to "Drinks",
-    "קפסולות קפה" to "Drinks",
     "שוופס" to "Drinks",
     "תה" to "Drinks",
-    "תה קר" to "Drinks",
     "תירוש" to "Drinks",
 
     // --- Dairy & Eggs (חלב, ביצים וגבינות) ---
     "ביצים" to "Dairy",
     "גבינה" to "Dairy",
-    "גבינה בולגרית" to "Dairy",
-    "גבינה לבנה" to "Dairy",
-    "גבינה מלוחה" to "Dairy",
-    "גבינה עזים" to "Dairy",
-    "גבינה צהובה" to "Dairy",
-    "גבינה צפתית" to "Dairy",
-    "גבינה שמנת" to "Dairy",
+    "גבינת" to "Dairy",
     "חלב" to "Dairy",
-    "חלב לקפה" to "Dairy",
-    "חלב סויה" to "Dairy",
-    "חלב שיבולת שועל" to "Dairy",
     "חמאה" to "Dairy",
     "יוגורט" to "Dairy",
+    "ריוויון" to "Dairy",
     "לאבנה" to "Dairy",
     "מילקי" to "Dairy",
     "מעדן" to "Dairy",
     "מרגרינה" to "Dairy",
     "פרמזן" to "Dairy",
-    "קוטג'" to "Dairy",
-    "שמנת חמוצה" to "Dairy",
-    "שמנת מתוקה" to "Dairy",
+    "קוטג" to "Dairy",
+    "שמנת" to "Dairy",
+
 
     // --- Meat & Fish (בשר ודגים) ---
     "אמנון" to "Meat",
     "אנטריקוט" to "Meat",
-    "בשר טחון" to "Meat",
+    "בשר" to "Meat",
     "דג" to "Meat",
     "חזה עוף" to "Meat",
-    "טונה" to "Meat",
     "כנפיים" to "Meat",
     "כרעיים" to "Meat",
     "נסיכת הנילוס" to "Meat",
@@ -293,7 +298,7 @@ val typeDetermine = mapOf(
     "נקניקיות" to "Meat",
     "סלמון" to "Meat",
     "סטייק" to "Meat",
-    "עוף שלם" to "Meat",
+    "עוף" to "Meat",
     "פסטרמה" to "Meat",
     "פרגיות" to "Meat",
     "צלי כתף" to "Meat",
@@ -306,7 +311,6 @@ val typeDetermine = mapOf(
     "בורקס" to "Bakery",
     "חלה" to "Bakery",
     "לחם" to "Bakery",
-    "לחם פרוס" to "Bakery",
     "לחמניה" to "Bakery",
     "מלאווח" to "Frozen",
     "עוגה" to "Bakery",
@@ -321,6 +325,7 @@ val typeDetermine = mapOf(
     "זיתים" to "Pantry",
     "חומוס" to "Pantry",
     "טחינה" to "Pantry",
+    "טונה" to "Pantry",
     "יין" to "Pantry",
     "מיונז" to "Pantry",
     "מלח" to "Pantry",
@@ -328,7 +333,7 @@ val typeDetermine = mapOf(
     "סוכר" to "Pantry",
     "סילאן" to "Pantry",
     "עדשים" to "Pantry",
-    "עלי דפנה" to "Pantry",
+    "עלי גפן" to "Pantry",
     "פירורי לחם" to "Pantry",
     "פסטה" to "Pantry",
     "פתיתים" to "Pantry",
@@ -339,7 +344,6 @@ val typeDetermine = mapOf(
     "קינואה" to "Pantry",
     "ריבה" to "Pantry",
     "שמן" to "Pantry",
-    "שמן זית" to "Pantry",
     "שימורים" to "Pantry",
     "תה" to "Pantry",
 
@@ -349,8 +353,7 @@ val typeDetermine = mapOf(
     "נייר טואלט" to "Cleaning",
     "נייר סופג" to "Cleaning",
     "ניילון נצמד" to "Cleaning",
-    "סבון כלים" to "Cleaning",
-    "סבון גוף" to "Cleaning",
+    "סבון" to "Cleaning",
     "שמפו" to "Cleaning",
-    "שקיות זבל" to "Cleaning"
+    "שקיות" to "Cleaning"
 )
