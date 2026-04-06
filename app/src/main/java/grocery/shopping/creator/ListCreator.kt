@@ -1,13 +1,11 @@
 package grocery.shopping.creator
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -26,7 +24,7 @@ private lateinit var recyclerView: RecyclerView
 class ListCreator : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-      //  enableEdgeToEdge()
+        //  enableEdgeToEdge()
         setContentView(R.layout.list_creator)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.list_maker)) { v, insets ->
@@ -57,8 +55,6 @@ class ListCreator : AppCompatActivity() {
                 Log.d("ListCreator", "metadataList: $metadataList")
 
 
-
-
             }
 
             fetchGroceryList(listID) { listFromFirebase2 ->
@@ -70,9 +66,6 @@ class ListCreator : AppCompatActivity() {
             }
 
         }
-
-
-
 
     }
 
@@ -139,8 +132,7 @@ class ListCreator : AppCompatActivity() {
                 val position = recyclerView.getChildAdapterPosition(recyclerView.focusedChild)
                 if (position != RecyclerView.NO_POSITION) {
                     listAdapter.removeItem(position)
-                }
-                else{
+                } else {
                     Toast.makeText(this, "יש לבחור מוצר למחיקה", Toast.LENGTH_SHORT).show()
                 }
                 true
