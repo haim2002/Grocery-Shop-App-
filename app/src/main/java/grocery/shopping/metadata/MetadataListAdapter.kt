@@ -1,4 +1,4 @@
-package grocery.shopping
+package grocery.shopping.metadata
 
 import android.content.Intent
 import android.graphics.Color
@@ -10,9 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.recyclerview.widget.RecyclerView
+import grocery.shopping.R
 import grocery.shopping.data.ListInfo
-import grocery.shopping.data.ShoppingRepository.deleteListFromFirebase
+import grocery.shopping.data.ShoppingRepository
+import grocery.shopping.displayer.ListDisplayer
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -21,7 +24,7 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
     RecyclerView.Adapter<MetadataListAdapter.ItemViewHolder>() {
 
 
-    var actionMode: androidx.appcompat.view.ActionMode? = null
+    var actionMode: ActionMode? = null
     var selectedPosition: Int = RecyclerView.NO_POSITION
 
     class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -87,11 +90,11 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
 
         }
        //
-        val actionModeCallback = object : androidx.appcompat.view.ActionMode.Callback {
+        val actionModeCallback = object : ActionMode.Callback {
 
 
             override fun onCreateActionMode(
-                mode: androidx.appcompat.view.ActionMode,
+                mode: ActionMode,
                 menu: Menu
             ): Boolean {
                 // INFLATE your XML here - this puts the buttons on top
@@ -101,12 +104,12 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
             }
 
             override fun onActionItemClicked(
-                mode: androidx.appcompat.view.ActionMode,
+                mode: ActionMode,
                 item: MenuItem
             ): Boolean {
                 return when (item.itemId) {
                     R.id.action_delete -> {
-                        deleteListFromFirebase(lists[selectedPosition].firebaseKey)
+                        ShoppingRepository.deleteListFromFirebase(lists[selectedPosition].firebaseKey)
                         mode.finish() // Closes the top bar
                         true
                     }
@@ -122,10 +125,10 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
                 }
             }
 
-            override fun onPrepareActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu) =
+            override fun onPrepareActionMode(mode: ActionMode, menu: Menu) =
                 false
 
-            override fun onDestroyActionMode(mode: androidx.appcompat.view.ActionMode) {
+            override fun onDestroyActionMode(mode: ActionMode) {
                 val previousSelection = selectedPosition
                 selectedPosition = RecyclerView.NO_POSITION // Reset the selection
                 actionMode = null
