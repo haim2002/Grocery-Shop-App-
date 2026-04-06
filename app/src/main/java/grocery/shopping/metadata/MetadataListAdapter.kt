@@ -1,5 +1,6 @@
 package grocery.shopping.metadata
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.util.Log
@@ -158,6 +159,7 @@ class MetadataListAdapter(var lists: List<ListInfo>) :
 
     override fun getItemCount(): Int = lists.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newList: List<ListInfo>) {
         this.lists = newList
         notifyDataSetChanged()
