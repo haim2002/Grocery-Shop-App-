@@ -146,10 +146,10 @@ object ShoppingRepository {
     // function that updates the checkbox status in firebase
     fun updateCheckStatusInFirebase(listId: String, itemID: String, isChecked: Boolean) {
 
-        // 2. Point to the specific item
+        // Point to the specific item
         val itemRef = database.child(LISTS_PATH).child(listId).child(itemID)
 
-        // 3. Create a map of the updates
+        // Create a map of the updates
         val updates = mapOf(
             "isChecked" to isChecked
         )
@@ -158,6 +158,25 @@ object ShoppingRepository {
         itemRef.updateChildren(updates).addOnFailureListener {
             // Handle any database errors here
             Log.e("Firebase", "Failed to update checkbox", it)
+        }
+    }
+
+    // a function that updates the list name in firebase
+    fun updateListNameInFirebase(listId: String, listName: String) {
+
+        // Point to the specific item
+        val itemRef = database.child(METADATA_PATH).child(listId)
+
+        // Create a map of the updates
+        val updates = mapOf(
+            "listName" to listName
+
+        )
+
+        // Use updateChildren to merge the change
+        itemRef.updateChildren(updates).addOnFailureListener {
+            // Handle any database errors here
+            Log.e("Firebase", "Failed to update name", it)
         }
     }
 
