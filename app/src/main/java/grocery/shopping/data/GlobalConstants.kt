@@ -17,10 +17,8 @@ const val DEFAULT_PRODUCT_NAME = ""
 const val UNNAMED_LIST = "UnNamedList"
 const val DATABASE_URL =
     "https://grocery-shopping-80ca3-default-rtdb.europe-west1.firebasedatabase.app/"
-
 const val METADATA_PATH = "lists_metadata"
 const val LISTS_PATH = "grocery_lists"
-
 const val DEFAULT_USER_NAME = "Unknown"
 
 
