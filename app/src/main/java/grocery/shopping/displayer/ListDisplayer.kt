@@ -1,17 +1,18 @@
-package grocery.shopping
+package grocery.shopping.displayer
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import grocery.shopping.R
 import grocery.shopping.creator.ListCreator
 import grocery.shopping.data.ShoppingRepository.fetchGroceryList
 
@@ -49,7 +50,7 @@ class ListDisplayer : AppCompatActivity() {
 
         fetchGroceryList(listId) { listFromFirebase ->
             listAdapter = ListDisplayAdapter(listFromFirebase, listId)
-            Log.d("ListDisplayerDebug", "listId: ${listId}")
+            Log.d("ListDisplayerDebug", "listId: $listId")
 
             // Set the adapter and layout manager for the RecyclerView
             recyclerView.adapter = listAdapter
@@ -78,7 +79,7 @@ class ListDisplayer : AppCompatActivity() {
 
             R.id.editList -> {
 
-                Log.d("ListDisplayerID2", "listId: ${listId}")
+                Log.d("ListDisplayerID2", "listId: $listId")
                 val intent = Intent(this, ListCreator::class.java)
                 intent.putExtra("ListID", listId)
                 startForResult.launch(intent)
@@ -91,12 +92,13 @@ class ListDisplayer : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun refreshList() {
 
 
         fetchGroceryList(listId) { listFromFirebase ->
             listAdapter = ListDisplayAdapter(listFromFirebase, listId)
-            Log.d("ListDisplayerDebug", "listId: ${listId}")
+            Log.d("ListDisplayerDebug", "listId: $listId")
             Log.d("ListDisplayerDebug", "listFromFirebase: $listFromFirebase")
             // Set the adapter and layout manager for the RecyclerView
             recyclerView.adapter = listAdapter
