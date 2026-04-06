@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:paddingStart="4dp"
         android:paddingEnd="8dp"
-        android:text="x"
+        android:text="@string/x_string"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/quantity_display"
