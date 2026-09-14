@@ -1,6 +1,6 @@
 <div align="center">
 
-  <h1>🛒 SmartCart</h1>
+  <h1>🛒 Grocery List</h1>
   <p><b>The Intelligent, Real-Time Mobile Grocery Assistant</b></p>
 
   [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge&logo=github)](https://github.com/YOUR_USERNAME/grocery-shopping-app/releases/tag/v1.0)
@@ -19,23 +19,10 @@
 
 > [!IMPORTANT]
 > ### 🎯 Core Vision & Mission
-> Standard grocery apps treat shopping lists as unstructured plain text. **SmartCart** re-architects the shopping experience around **spatial grocery logic**:
 >
 > 1. **Zero Backtracking:** Automatically map and sort item entries into physical supermarket departments (Produce, Bakery, Dairy, Meat, Frozen) to guide users seamlessly from store entrance to checkout.
 > 2. **Instant Household Convergence:** Real-time multi-device database mirroring so updates made by one family member at home reflect instantly on the shopper's phone in the store.
 > 3. **Single-Handed In-Store UX:** Designed specifically for fast, effortless interaction with low cognitive load during busy trips.
-
----
-
-## 📸 Interface Preview
-
-<div align="center">
-
-| 🔐 Authentication | 🛒 Real-Time List | 📂 Aisle Categorization |
-| :---: | :---: | :---: |
-| <img src="https://via.placeholder.com/250x500.png?text=Google+Auth+UI" width="220"/> | <img src="https://via.placeholder.com/250x500.png?text=SmartCart+List+UI" width="220"/> | <img src="https://via.placeholder.com/250x500.png?text=Category+Sorting+UI" width="220"/> |
-
-</div>
 
 ---
 
