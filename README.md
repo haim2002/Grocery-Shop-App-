@@ -6,7 +6,7 @@
   <h1>Grocery Shopping</h1>
 
 </div>
-  <p><b>The Intelligent, Real-Time Mobile Grocery Assistant</b></p>
+  <p><b>Real-Time Mobile Grocery Assistant</b></p>
 
   [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge&logo=github)](https://github.com/YOUR_USERNAME/grocery-shopping-app/releases/tag/v1.0)
   [![Kotlin](https://img.shields.io/badge/Kotlin-1.9%2B-7F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
