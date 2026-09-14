@@ -2,7 +2,7 @@
 
   <div align="center">
 
-  <img src="app/src/main/res/mipmap-xxhdpi/ic_launcher.png" width="96" height="96" alt="Grocery Shopping Logo" />
+  <img src="app\src\main\res\mipmap-hdpi" width="96" height="96" alt="Grocery Shopping Logo" />
   <h1>Grocery Shopping</h1>
 
 </div>
