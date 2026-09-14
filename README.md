@@ -43,4 +43,4 @@
 
 ## 🏗️ System Architecture & Tech Stack
 
-SmartCart follows **Modern Android Application Architecture** guidelines, employing **Clean Architecture** principles and the **MVVM (Model-View-ViewModel)** design pattern.
+Grocery Shopping follows **Modern Android Application Architecture** guidelines, employing **Clean Architecture** principles and the **MVVM (Model-View-ViewModel)** design pattern.
